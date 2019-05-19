@@ -1,4 +1,4 @@
-class VesselUtils {
+class Utils {
 
   constructor ( dimDiv ) {
     this.dimDiv = dimDiv;
@@ -72,7 +72,7 @@ class VesselUtils {
         matArray.unshift([aGroup.children[i].rotation.x, aGroup.children[i].rotation.y, aGroup.children[i].rotation.z,
                           aGroup.children[i].position.x, aGroup.children[i].position.y, aGroup.children[i].position.z ,aGroup.children[i].rotation.order]);
         // Recursive Call	on Group's children
-        VesselUtils.mergeGroupChildren( geo, aGroup.children[i], matArray );
+        Utils.mergeGroupChildren( geo, aGroup.children[i], matArray );
 
       }
     }
@@ -83,14 +83,14 @@ class VesselUtils {
     if (group.children.length > 1 && group.children[0].isGroup) {
       for (var i = 0; i < group.children.length; i++) {
         // Use the group's transforn then the current subgroup's transfrom
-        VesselUtils.mergeGroupChildren( geo, group.children[i], [[group.children[i].rotation.x, group.children[i].rotation.y, group.children[i].rotation.z,
+        Utils.mergeGroupChildren( geo, group.children[i], [[group.children[i].rotation.x, group.children[i].rotation.y, group.children[i].rotation.z,
           group.children[i].position.x, group.children[i].position.y, group.children[i].position.z, group.children[i].rotation.order],
           [group.rotation.x, group.rotation.y, group.rotation.z,
             group.position.x, group.position.y, group.position.z, group.rotation.order]] );
       }
     } else {
       // Use the group's transforn
-      VesselUtils.mergeGroupChildren( geo, group, [[group.rotation.x, group.rotation.y, group.rotation.z,
+      Utils.mergeGroupChildren( geo, group, [[group.rotation.x, group.rotation.y, group.rotation.z,
         group.position.x, group.position.y, group.position.z, group.rotation.order]] );
     }
     return geo;
