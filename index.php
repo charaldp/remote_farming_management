@@ -31,7 +31,13 @@
 
 	<script>
 
-	var group, camera, componentsInfo, componentsUUID, scene, renderer, INTERSECTED, childs;
+	var group, camera, componentsInfo, componentsUUID, scene, renderer, INTERSECTED, childs, car, acceleration;
+	var speed = new THREE.Vector3();
+	var up = false,
+    right = false,
+    down = false,
+    left = false;
+
 	var clickInfo = {
 	  x: 0,
 	  y: 0,
@@ -50,7 +56,7 @@
 	var totalLength = 0; // Total length is normalized and is used to preview the full !scaled! scene
 	var sceneCenter = new THREE.Vector3();
 	var componentIndices = [];
-	var dimDiv = 100; // This variable divides all dimension data in order to provide a better visualization
+	var dimDiv = 1; // This variable divides all dimension data in order to provide a better visualization
 	var utils = new Utils( dimDiv );
 	var outsideMeshMaterial = new THREE.MeshLambertMaterial({
 		color: 0xcccccc,
@@ -82,8 +88,10 @@
 		function init() {
 			scene = new THREE.Scene();
 			group = new THREE.Group();
-			var wheel = new Wheel( 500, 430, 150, 'Flat', { DO: 500, DI: 430, t: 150 }, 'Ribs', { DO: 430, DI: 400, t: 150, intrWidth:  22, numRibs: 12, tRib: 15, dRib: 30, ribsPosition: 120, axleIntrWidth: -10, axleDI: 10 , axleDO: 80, tAxle: 20 }, 40, {}, meshMaterial);
-			var car = new Car( wheel, [new THREE.Vector2( - 1000, 900 ), new THREE.Vector2( 1000, 900)]);
+			var wheel = new Wheel( 5, 4.3, 1.5, 'Flat', { DO: 5, DI: 4.3, t: 1.5 }, 'Ribs', { DO: 4.3, DI: 4, t: 1.5, intrWidth:  0.22, numRibs: 12, tRib: 0.15,
+				 dRib: 0.30, ribsPosition: 1.2, axleIntrWidth: -0.1, axleDI: 0.1 , axleDO: 0.8, tAxle: 0.2 }, 0.4, {}, meshMaterial);
+			acceleration = 0;
+			car = new Car( wheel, [new THREE.Vector2( - 10, 9 ), new THREE.Vector2( 10, 9)]);
 			var components = [car];
 			renderer = new THREE.WebGLRenderer( { antialias: true } );
 			renderer.setPixelRatio( window.devicePixelRatio );
@@ -102,10 +110,10 @@
 			sceneGeometry.computeBoundingSphere()
 			totalLength = 1.65 * sceneGeometry.boundingSphere.radius;
 			sceneCenter = sceneGeometry.boundingSphere.center.clone();
-
+			console.log(sceneCenter);
 			// camera
 			camera = new THREE.PerspectiveCamera( 40, window.innerWidth / window.innerHeight, 1, 50 * totalLength);
-			camera.position.set( sceneCenter.x + totalLength, sceneCenter.y + totalLength, sceneCenter.z + totalLength );
+			camera.position.set( sceneCenter.x - totalLength, sceneCenter.y + totalLength, 0 );
 			scene.add( camera );
 
 			// controls
@@ -116,6 +124,7 @@
 			controls.target = sceneCenter;
 			controls.maxPolarAngle = Math.PI * 2;
 			controls.screenSpacePanning = true;
+			controls.enableKeys = false;
 			controls.update();
 			// console.log(controls);
 
@@ -146,7 +155,7 @@
 				group.add(components[i].group);
 				// console.log(componentsUUID[i]);
 			}
-
+			console.log(controls);
 			childs = [];
 			console.log( group.children );
 			for ( var i = 0; i < group.children.length; i++)
@@ -163,7 +172,7 @@
 
 			// calculate mouse position in normalized device coordinates
 			// (-1 to +1) for both components
-
+			// acceleration = 0;
 			mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
 			mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
 
@@ -175,11 +184,43 @@
 		  clickInfo.userHasClicked = true;
 		  clickInfo.x = event.clientX;
 		  clickInfo.y = event.clientY;
+			acceleration += 10;
 		}
 		function onRightClick ( event ) {
 			clickInfo.userHasRightClicked = true;
 		  clickInfo.x = event.clientX;
 		  clickInfo.y = event.clientY;
+			acceleration -= 10;
+		}
+		document.addEventListener('keydown',press)
+		function press(e){
+		  if (e.keyCode === 38 /* up */ || e.keyCode === 87 /* w */ || e.keyCode === 90 /* z */){
+		    up = true
+		  }
+		  if (e.keyCode === 39 /* right */ || e.keyCode === 68 /* d */){
+		    right = true
+		  }
+		  if (e.keyCode === 40 /* down */ || e.keyCode === 83 /* s */){
+		    down = true
+		  }
+		  if (e.keyCode === 37 /* left */ || e.keyCode === 65 /* a */ || e.keyCode === 81 /* q */){
+		    left = true
+		  }
+		}
+		document.addEventListener('keyup',release)
+		function release(e){
+		  if (e.keyCode === 38 /* up */ || e.keyCode === 87 /* w */ || e.keyCode === 90 /* z */){
+		    up = false
+		  }
+		  if (e.keyCode === 39 /* right */ || e.keyCode === 68 /* d */){
+		    right = false
+		  }
+		  if (e.keyCode === 40 /* down */ || e.keyCode === 83 /* s */){
+		    down = false
+		  }
+		  if (e.keyCode === 37 /* left */ || e.keyCode === 65 /* a */ || e.keyCode === 81 /* q */){
+		    left = false
+		  }
 		}
 
 		function animate(){
@@ -189,7 +230,12 @@
 		}
 
 		function render() {
-
+			acceleration = (up ? 1 : 0) - (down ? 1 : 0) - (!(up || down) ? 0.5 * Math.sign(speed.x) : 0);
+			console.log( acceleration, speed );
+			speed.x += acceleration;
+			car.rotateWheels( 0.05, speed.x / ( car.wheelR *  Math.PI / 2) );
+			car.moveCar( 0.05, speed );
+			camera.position.set( car.center.x - car.length * car.frontVector.x, car.center.y + car.length, car.center.z - car.length * car.frontVector.z );
 			renderer.render( scene, camera );
 		}
 		window.addEventListener( 'mousemove', onMouseMove, false );
