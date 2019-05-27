@@ -3,7 +3,7 @@
 	<head>
 		<meta charset="utf-8">
 		<title>Ajax JSON Input File Demo</title>
-		<meta name="viewport" content="width=device-width, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
+		<meta name="viewport" content="width=1920, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
 		<style>
 
 		</style>
@@ -31,7 +31,8 @@
 
 	<script>
 
-	var group, camera, componentsInfo, componentsUUID, scene, renderer, INTERSECTED, childs, car, acceleration;
+	var group, camera, componentsInfo, componentsUUID, scene, renderer, INTERSECTED, childs, car, acceleration, steerAcceleration;
+	var steerSpeed = 0;
 	var speed = new THREE.Vector3();
 	var up = false,
     right = false,
@@ -113,15 +114,15 @@
 			console.log(sceneCenter);
 			// camera
 			camera = new THREE.PerspectiveCamera( 40, window.innerWidth / window.innerHeight, 1, 50 * totalLength);
-			camera.position.set( sceneCenter.x - totalLength, sceneCenter.y + totalLength, 0 );
+			camera.position.set( car.center.x - totalLength, car.center.y + totalLength, 0 );
 			scene.add( camera );
 
 			// controls
 			controls = new THREE.OrbitControls( camera, renderer.domElement );
 			controls.minDistance = totalLength / 10;
 			controls.maxDistance = 10 * totalLength;
-			controls.target0 = sceneCenter;
-			controls.target = sceneCenter;
+			controls.target0 = car.center;
+			controls.target = car.center;
 			controls.maxPolarAngle = Math.PI * 2;
 			controls.screenSpacePanning = true;
 			controls.enableKeys = false;
@@ -231,11 +232,17 @@
 
 		function render() {
 			acceleration = (up ? 1 : 0) - (down ? 1 : 0) - (!(up || down) ? 0.5 * Math.sign(speed.x) : 0);
-			console.log( acceleration, speed );
+			steerSpeed = (left ? 0.8 : 0) - (right ? 0.8 : 0) - (!(left || right) ? 0.8 * Math.sign(car.steeringWheelPosition) : 0);
+			console.log( acceleration, speed, car.steeringWheelPosition );
+			// steerSpeed += steerAcceleration;
 			speed.x += acceleration;
 			car.rotateWheels( 0.05, speed.x / ( car.wheelR *  Math.PI / 2) );
 			car.moveCar( 0.05, speed );
-			camera.position.set( car.center.x - car.length * car.frontVector.x, car.center.y + car.length, car.center.z - car.length * car.frontVector.z );
+			car.steerWheels( 0.05, steerSpeed );
+			camera.position.x += speed.x * 0.05;
+			camera.position.y += speed.y * 0.05;
+			camera.position.z += speed.z * 0.05;
+			// ( car.center.x - car.length * car.frontVector.x, car.center.y + car.length, car.center.z - car.length * car.frontVector.z );
 			renderer.render( scene, camera );
 		}
 		window.addEventListener( 'mousemove', onMouseMove, false );

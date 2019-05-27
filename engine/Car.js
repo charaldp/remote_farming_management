@@ -16,7 +16,7 @@ class Car{
         }
       }
       this.frontVector = new THREE.Vector3( 1, 0, 0 );
-      this.center = new THREE.Vector3();
+      this.center = new THREE.Vector3( 0, 2 * wheel.R, 0 );
       this.length = max - min;
       this.maxWheelSteer = 50 * Math.PI / 180;
       this.ackermanPoint = 'NaN';     // 'Nan' Going Straight
@@ -24,6 +24,8 @@ class Car{
       this.wheelR = wheel.R;
       this.group = new THREE.Group();
       this.group.add(this.wheelGroup);
+      this.carMesh = new THREE.Mesh(new THREE.BoxGeometry( 30, 4, 18).translate( 0, 3, 0 ), new THREE.MeshPhysicalMaterial());
+      this.group.add(this.carMesh);
     }
     rotateWheels( timestep, speed ) {
       for ( var i = 0; i < this.wheelGroup.children.length; i++ ) {
@@ -36,10 +38,15 @@ class Car{
         this.wheelGroup.children[i].position.y += speed.y * timestep;
         this.wheelGroup.children[i].position.z += speed.z * timestep;
       }
+      this.carMesh.position.x += speed.x * timestep;
+      this.carMesh.position.y += speed.y * timestep;
+      this.carMesh.position.z += speed.z * timestep;
       this.center.add(speed.clone().multiplyScalar(timestep));
     }
     steerWheels( timestep, speed ) {
-      this.wheelGroup.children[0].rotation.y += speed;
-      this.wheelGroup.children[1].rotation.y += speed;
+      car.steeringWheelPosition += speed * timestep;
+      if (Math.abs(car.steeringWheelPosition) > this.maxWheelSteer ) car.steeringWheelPosition = Math.sign(car.steeringWheelPosition) * this.maxWheelSteer;
+      this.wheelGroup.children[2].rotation.y = car.steeringWheelPosition;
+      this.wheelGroup.children[3].rotation.y = - car.steeringWheelPosition;
     }
 }
