@@ -1,5 +1,5 @@
 class Car{
-    constructor( wheel, wheelsPositions, carGeo ) {
+    constructor( wheel, wheelsPositions, engine, carGeo ) {
       this.wheelGroup = new THREE.Group();
       if ( wheel instanceof Wheel ) {
         var min = 0, max = 0;
@@ -15,6 +15,7 @@ class Car{
           if (wheel.group.position.x < min) min = wheel.group.position.x;
         }
       }
+      this.engine = engine;
       this.frontVector = new THREE.Vector3( 1, 0, 0 );
       this.center = new THREE.Vector3( 0, 2 * wheel.R, 0 );
       this.length = max - min;
