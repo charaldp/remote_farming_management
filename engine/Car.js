@@ -1,5 +1,5 @@
 class Car{
-    constructor( wheel, wheelsPositions, engine, carGeo ) {
+    constructor( wheel, wheelsPositions, engine, mass, transmission, carGeo ) {
       this.wheelGroup = new THREE.Group();
       if ( wheel instanceof Wheel ) {
         var min = 0, max = 0;
@@ -16,38 +16,46 @@ class Car{
         }
       }
       this.engine = engine;
+      this.transmission = transmission;
+      this._mass = mass;
       this.frontVector = new THREE.Vector3( 1, 0, 0 );
+      this.speed = new THREE.Vector3( 0, 0, 0 );
+      this.rotationalSpeed = new THREE.Euler( 0, 0, 0 );
       this.center = new THREE.Vector3( 0, 2 * wheel.R, 0 );
       this.length = max - min;
-      this.maxWheelSteer = 50 * Math.PI / 180;
-      this.ackermanPoint = 'NaN';     // 'Nan' Going Straight
-      this.steeringWheelPosition = 0; // Steering Curvature Radius
-      this.wheelR = wheel.R;
+      this.ackermanSteering = {
+        maxWheelSteer: 50 * Math.PI / 180 /*50 degrees max*/,
+        ackermanPoint: 'Nan' /* 'Nan': rotating araound a point at infinite a.k.a. Going Straight*/,
+        steeringWheelPosition: 0};
+      this._wheel = wheel;
       this.group = new THREE.Group();
       this.group.add(this.wheelGroup);
       this.carMesh = new THREE.Mesh(new THREE.BoxGeometry( 30, 4, 18).translate( 0, 3, 0 ), new THREE.MeshPhysicalMaterial());
       this.group.add(this.carMesh);
     }
-    rotateWheels( timestep, speed ) {
+    rotateWheels( timestep ) {
       for ( var i = 0; i < this.wheelGroup.children.length; i++ ) {
-        this.wheelGroup.children[i].rotation.z -= speed * timestep * Math.sign(this.wheelGroup.children[i].position.z);
+        this.wheelGroup.children[i].rotation.z -= this.speed.length() / ( this._wheel.R *  Math.PI / 2) * timestep * Math.sign(this.wheelGroup.children[i].position.z);
       }
     }
-    moveCar( timestep, speed ) {
+    moveCar( timestep ) {
       for ( var i = 0; i < this.wheelGroup.children.length; i++ ) {
-        this.wheelGroup.children[i].position.x += speed.x * timestep;
-        this.wheelGroup.children[i].position.y += speed.y * timestep;
-        this.wheelGroup.children[i].position.z += speed.z * timestep;
+        this.wheelGroup.children[i].position.x += this.speed.x * timestep;
+        this.wheelGroup.children[i].position.y += this.speed.y * timestep;
+        this.wheelGroup.children[i].position.z += this.speed.z * timestep;
       }
-      this.carMesh.position.x += speed.x * timestep;
-      this.carMesh.position.y += speed.y * timestep;
-      this.carMesh.position.z += speed.z * timestep;
-      this.center.add(speed.clone().multiplyScalar(timestep));
+      this.carMesh.position.x += this.speed.x * timestep;
+      this.carMesh.position.y += this.speed.y * timestep;
+      this.carMesh.position.z += this.speed.z * timestep;
+      this.center.add(this.speed.clone().multiplyScalar(timestep));
     }
-    steerWheels( timestep, speed ) {
-      car.steeringWheelPosition += speed * timestep;
-      if (Math.abs(car.steeringWheelPosition) > this.maxWheelSteer ) car.steeringWheelPosition = Math.sign(car.steeringWheelPosition) * this.maxWheelSteer;
-      this.wheelGroup.children[2].rotation.y = car.steeringWheelPosition;
-      this.wheelGroup.children[3].rotation.y = - car.steeringWheelPosition;
+    steerWheels( timestep, steerSpeed ) {
+      this.ackermanSteering.steeringWheelPosition += steerSpeed * timestep;
+      if (Math.abs(this.ackermanSteering.steeringWheelPosition) > this.ackermanSteering.maxWheelSteer ) this.ackermanSteering.steeringWheelPosition = Math.sign(this.ackermanSteering.steeringWheelPosition) * this.ackermanSteering.maxWheelSteer;
+      this.wheelGroup.children[2].rotation.y = this.ackermanSteering.steeringWheelPosition * (this.ackermanSteering.steeringWheelPosition < 0 ? 1 : 0.7);
+      this.wheelGroup.children[3].rotation.y = - this.ackermanSteering.steeringWheelPosition * (this.ackermanSteering.steeringWheelPosition > 0 ? 1 : 0.7);
+    }
+    updateLoad( timestep ) {
+      this.engine._currentTorque
     }
 }

@@ -6,7 +6,7 @@
 		<meta name="viewport" content="width=1920, user-scalable=no, minimum-scale=1.0, maximum-scale=1.0">
 		<style>
 			body { margin: 0; }
-			canvas { width: 100%; height: 100% }
+			canvas { block };/*width: 100%; height: 100% };*/
 		</style>
 	</head>
 	<body>
@@ -32,15 +32,16 @@
 
 	<script>
 
-	var group, camera, componentsInfo, sound, componentsUUID, scene, renderer, INTERSECTED, childs, car, acceleration, steerAcceleration;
+	var group, camera, text2, componentsInfo, sound, componentsUUID, scene, renderer, INTERSECTED, childs, car, acceleration, steerAcceleration;
 	var steerSpeed = 0;
 	var throttle = 1;
+	var brake = 1;
+	var transmission = {clutch: 0, gear: false, gearbox: [ -0.2, 0.13, 0.22, 0.30, 0.37, 0.43, 0.48 ] };
 	var speed = new THREE.Vector3();
 	var up = false,
     right = false,
     down = false,
     left = false;
-		gear = false;
 	var clickInfo = {
 	  x: 0,
 	  y: 0,
@@ -94,14 +95,24 @@
 			var wheel = new Wheel( 5, 4.3, 1.5, 'Flat', { DO: 5, DI: 4.3, t: 1.5 }, 'Ribs', { DO: 4.3, DI: 4, t: 1.5, intrWidth:  0.22, numRibs: 12, tRib: 0.15,
 				 dRib: 0.30, ribsPosition: 1.2, axleIntrWidth: -0.1, axleDI: 0.1 , axleDO: 0.8, tAxle: 0.2 }, 0.4, {}, meshMaterial);
 			acceleration = 0;
-			var engine = new Engine( 500, 5000 / 60, 1050 / 60, 300 );
-			car = new Car( wheel, [new THREE.Vector2( - 10, 9 ), new THREE.Vector2( 10, 9)], engine);
+			var engine = new Engine( 100, 5000 / 60, 1050 / 60, 300 );
+			car = new Car( wheel, [new THREE.Vector2( - 10, 9 ), new THREE.Vector2( 10, 9)], engine, 1200, transmission);
+			console.log(car.speed);
 			var components = [car];
 			renderer = new THREE.WebGLRenderer( { antialias: true } );
 			renderer.setPixelRatio( window.devicePixelRatio );
 			renderer.setSize( window.innerWidth, window.innerHeight );
 			document.body.appendChild( renderer.domElement );
-
+			text2 = document.createElement('div');
+			text2.style.position = 'absolute';
+			//text2.style.zIndex = 1;    // if you still don't see the label, try uncommenting this
+			text2.style.width = 100;
+			text2.style.height = 100;
+			// text2.style.backgroundColor = "transparent";
+			text2.innerHTML = "hi there!";
+			text2.style.top = '97%';//200 + 'px';
+			// text2.style.left = 20 + 'px';
+			document.body.appendChild(text2);
 			var arr = [];
 			for ( var i = 0; i < components.length; i++ ) {
 				var geo = new THREE.Geometry();
@@ -161,16 +172,16 @@
 			sunSphere.visible = true;
 			scene.add( sunSphere );
 
-			var effectController = {
-				turbidity: 10,
-				rayleigh: 2,
-				mieCoefficient: 0.005,
-				mieDirectionalG: 0.8,
-				luminance: 1,
-				inclination: 0.49, // elevation / inclination
-				azimuth: 0.25, // Facing front,
-				sun: ! true
-			};
+			// var effectController = {
+			// 	turbidity: 10,
+			// 	rayleigh: 2,
+			// 	mieCoefficient: 0.005,
+			// 	mieDirectionalG: 0.8,
+			// 	luminance: 1,
+			// 	inclination: 0.49, // elevation / inclination
+			// 	azimuth: 0.25, // Facing front,
+			// 	sun: true
+			// };
 			var distance = 400000;
 			var effectController = {
 				turbidity: 6.1,
@@ -258,7 +269,7 @@
 		  clickInfo.y = event.clientY;
 			acceleration -= 10;
 		}
-		document.addEventListener('keydown',press)
+		document.addEventListener( 'keydown', press )
 		function press(e){
 		  if (e.keyCode === 38 /* up */ ){
 		    up = true
@@ -275,32 +286,33 @@
 
 			switch ( e.keyCode ) {
 				case 81: /* q */
-					gear = 1;
+					car.transmission.gear = 1;
 					break;
 				case 65: /* a */
-					gear = 2;
+					car.transmission.gear = 2;
 					break;
 				case 87: /* w */
-					gear = 3;
+					car.transmission.gear = 3;
 					break;
 				case 83: /* s */
-					gear = 4;
+					car.transmission.gear = 4;
 					break;
 				case 69: /* e */
-					gear = 5;
+					car.transmission.gear = 5;
 					break;
 				case 68: /* d */
-					gear = 6;
+					car.transmission.gear = 6;
 					break;
 				case 82: /* r */
-					gear = 0;
+					car.transmission.gear = 0;
 					break;
-				default:
-					gear = false;
+				// default:
+				// 	car.transmission.gear = false; !!! Wrong! Key release will do the job
 			}
+			console.log(e.keyCode);// space === 32
 
 		}
-		document.addEventListener('keyup',release)
+		document.addEventListener( 'keyup', release )
 		function release(e){
 		  if (e.keyCode === 38 /* up */){
 		    up = false
@@ -316,32 +328,32 @@
 		  }
 			switch ( e.keyCode ) {
 				case 81: /* q */
-					if (gear === 1)
-						gear = false;
+					if (transmission.gear === 1)
+						car.transmission.gear = false;
 					break;
 				case 65: /* a */
-					if (gear === 2)
-						gear = false;
+					if (transmission.gear === 2)
+						car.transmission.gear = false;
 					break;
 				case 87: /* w */
-					if (gear === 3)
-						gear = false;
+					if (transmission.gear === 3)
+						car.transmission.gear = false;
 					break;
 				case 83: /* s */
-					if (gear === 4)
-						gear = false;
+					if (transmission.gear === 4)
+						car.transmission.gear = false;
 					break;
 				case 69: /* e */
-					if (gear === 5)
-						gear = false;
+					if (transmission.gear === 5)
+						car.transmission.gear = false;
 					break;
 				case 68: /* d */
-					if (gear === 6)
-						gear = false;
+					if (transmission.gear === 6)
+						car.transmission.gear = false;
 					break;
 				case 82: /* r */
-					if (gear === 0)
-						gear = false;
+					if (transmission.gear === 0)
+						car.transmission.gear = false;
 				}
 		}
 
@@ -352,22 +364,31 @@
 		}
 
 		function render() {
-			acceleration = (up ? 1 : 0) - (down ? 1 : 0) - (!(up || down) ? 0.5 * Math.sign(speed.x) : 0);
-			throttle += (up ? ( throttle < 10? 1 : 0) :( throttle > 1 ? -1 : 0)) * 0.05 ;
-			steerSpeed = (left ? 0.8 : 0) - (right ? 0.8 : 0) - (!(left || right) ? 4 * car.steeringWheelPosition : 0);
-			console.log( acceleration, speed, car.steeringWheelPosition, gear, car.engine._rot * 60, throttle );
+			// acceleration = (up ? 1 : 0) - (down ? 1 : 0) - (!(up || down) ? 0.5 * Math.sign(car.speed.x) : 0);
+			var timestep = 0.05;
+			throttle += ( up ? ( throttle < 2 ? 2 * timestep : 0 ) : ( throttle > 1 ? - 8 * timestep * (throttle - 1) : 0 ) );
+			brake += ( down ? ( brake < 1 ? 2 * timestep : 0 ) : ( brake > 0 ? - 4 * timestep * brake : 0 ) );
+			steerSpeed = (left ? 16 * timestep : 0) - (right ? 16 * timestep : 0) - (!(left || right) ? 4 * car.ackermanSteering.steeringWheelPosition : 0);
+			car.transmission.clutch += car.transmission.gear !== false ? (car.transmission.clutch < 1 ? timestep : 0 ) : (car.transmission.clutch > 0 ? - 2 * timestep * car.transmission.clutch : 0 );
+			text2.innerHTML = 'Engine RPM : ' + String( (car.engine._rot * 60).toFixed() ) +
+				// ', Speed : ', String( (car.speed).toFixed(1) ) +
+				' ,Throttle : ' + String( throttle.toFixed(1) ) +
+				' , Gear : ' + String( transmission.gear === false ? 'N' : (transmission.gear !== 0 ? transmission.gear : 'R') ) +
+				' , Accelaration : ' + String( acceleration.toFixed(1) ) +
+				' , Steering : ' +	String( (car.ackermanSteering.steeringWheelPosition).toFixed(1) ) +
+				' , Clutch : ' + String( car.transmission.clutch.toFixed(1) );
 			// steerSpeed += steerAcceleration;
-			speed.x += acceleration;
+			car.acceleration = acceleration;
 			// sound.setVolume(Math.min(Math.abs(speed.length()) / 20, 0.5));
-
-			car.rotateWheels( 0.05, speed.x / ( car.wheelR *  Math.PI / 2) );
-			car.moveCar( 0.05, speed );
-			car.engine.updateEngineState(throttle, 0.05);
+			car.rotateWheels( timestep );
+			// console.log(car._wheel.r);
+			car.moveCar( timestep );
+			car.engine.updateEngineState(throttle, timestep);
 			sound.setPlaybackRate( car.engine._rot / car.engine._idle_rot );
-			car.steerWheels( 0.05, steerSpeed );
-			camera.position.x += speed.x * 0.05;
-			camera.position.y += speed.y * 0.05;
-			camera.position.z += speed.z * 0.05;
+			car.steerWheels( timestep, steerSpeed );
+			camera.position.x += car.speed.x * timestep;
+			camera.position.y += car.speed.y * timestep;
+			camera.position.z += car.speed.z * timestep;
 			// ( car.center.x - car.length * car.frontVector.x, car.center.y + car.length, car.center.z - car.length * car.frontVector.z );
 			renderer.render( scene, camera );
 		}
