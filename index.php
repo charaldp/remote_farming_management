@@ -24,9 +24,10 @@
 	<script src="js/three/controls/MapControls.js"></script>
 	<script src="js/three/controls/FirstPersonControls.js"></script>
 	<script src="js/three/controls/TransformControls.js"></script>
-	<script src="engine/Wheel.js"></script>
-	<script src="engine/Car.js"></script>
-	<script src="engine/Engine.js"></script>
+	<script src="vehicle/Wheel.js"></script>
+	<script src="vehicle/Car.js"></script>
+	<script src="vehicle/Engine.js"></script>
+	<script src="vehicle/Phys.js"></script>
 	<script src="Models/Tire.js"></script>
 	<script src="Models/Rim.js"></script>
 
@@ -95,10 +96,12 @@
 			var wheel = new Wheel( 5, 4.3, 1.5, 'Flat', { DO: 5, DI: 4.3, t: 1.5 }, 'Ribs', { DO: 4.3, DI: 4, t: 1.5, intrWidth:  0.22, numRibs: 12, tRib: 0.15,
 				 dRib: 0.30, ribsPosition: 1.2, axleIntrWidth: -0.1, axleDI: 0.1 , axleDO: 0.8, tAxle: 0.2 }, 0.4, {}, meshMaterial);
 			acceleration = 0;
-			var engine = new Engine( 100, 5000 / 60, 1050 / 60, 300 );
-			car = new Car( wheel, [new THREE.Vector2( - 10, 9 ), new THREE.Vector2( 10, 9)], engine, 1200, transmission);
-			console.log(car.speed);
+			var engine = new Engine( 5, 5000 / 60, 1050 / 60, 300 );//I = M / 2 * R ^ 2 [kg*m^2]
+			var car_geo = Car.makeCarGeo( /*2D front to rear points*/[ [17, 0], [16.8, 0.5], [16.7, 1.9], [17, 2.5], [16.9, 3.2], [16.7, 3.4], [5.5, 4.7], [1, 6.5], [-7, 6.7],
+				 [-13, 4], [-17.9, 4.1], [-18, 4], [-18, 0.9], [-18.5, 0.9], [-18.5, 0] ], [ -10, 10 ] , 2.7, 19, 0.5 );
+			car = new Car( wheel, [new THREE.Vector2( - 10, 8 ), new THREE.Vector2( 10, 8 )], engine, 1200, transmission, car_geo);
 			var components = [car];
+			var physics = new Phys( 9.81, 0.8, 1, [] );
 			renderer = new THREE.WebGLRenderer( { antialias: true } );
 			renderer.setPixelRatio( window.devicePixelRatio );
 			renderer.setSize( window.innerWidth, window.innerHeight );
@@ -376,7 +379,9 @@
 				' , Gear : ' + String( transmission.gear === false ? 'N' : (transmission.gear !== 0 ? transmission.gear : 'R') ) +
 				' , Accelaration : ' + String( acceleration.toFixed(1) ) +
 				' , Steering : ' +	String( (car.ackermanSteering.steeringWheelPosition).toFixed(1) ) +
-				' , Clutch : ' + String( car.transmission.clutch.toFixed(1) );
+				' , Clutch : ' + String( car.transmission.clutch.toFixed(1) ) +
+				' , Power : ' + String( car.engine._currentPower.toFixed() ) +
+				' , Torque : ' + String( car.engine._currentTorque.toFixed() );
 			// steerSpeed += steerAcceleration;
 			car.acceleration = acceleration;
 			// sound.setVolume(Math.min(Math.abs(speed.length()) / 20, 0.5));

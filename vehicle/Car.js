@@ -30,7 +30,7 @@ class Car{
       this._wheel = wheel;
       this.group = new THREE.Group();
       this.group.add(this.wheelGroup);
-      this.carMesh = new THREE.Mesh(new THREE.BoxGeometry( 30, 4, 18).translate( 0, 3, 0 ), new THREE.MeshPhysicalMaterial());
+      this.carMesh = new THREE.Mesh( carGeo, new THREE.MeshPhysicalMaterial() );//new THREE.BoxGeometry( 30, 4, 18).translate( 0, 3, 0 ), new THREE.MeshPhysicalMaterial());
       this.group.add(this.carMesh);
     }
     rotateWheels( timestep ) {
@@ -56,6 +56,25 @@ class Car{
       this.wheelGroup.children[3].rotation.y = - this.ackermanSteering.steeringWheelPosition * (this.ackermanSteering.steeringWheelPosition > 0 ? 1 : 0.7);
     }
     updateLoad( timestep ) {
-      this.engine._currentTorque
+      this.engine._currentTorque = 4;
+    }
+    static makeCarGeo( frontToRearPoints, wheelsCentersPositions, radius, width, bevelThickness) {
+      var extrudeShape = new THREE.Shape();
+			extrudeShape.moveTo( frontToRearPoints[0][0], frontToRearPoints[0][1] );
+      for ( var i = 1; i < frontToRearPoints.length; i++ )
+        extrudeShape.lineTo( frontToRearPoints[i][0], frontToRearPoints[i][1] );
+      for ( var i = 0; i < wheelsCentersPositions.length; i++ )
+        extrudeShape.absarc( wheelsCentersPositions[i], 0, radius + bevelThickness, Math.PI, 0, true );
+			var extrudeSettings = {
+				steps: 1,
+				depth: width - 2 * bevelThickness,
+				bevelEnabled: true,
+				bevelThickness: bevelThickness,
+				bevelSize: bevelThickness,
+				bevelOffset: bevelThickness,
+				bevelSegments: 10
+			};
+      var car_geo = new THREE.ExtrudeGeometry( extrudeShape, extrudeSettings );
+      return (car_geo.translate( 0, radius, - width / 2 + bevelThickness));
     }
 }
