@@ -1,2 +1,2 @@
-# vClavis_3d
-3d design of vessel components
+# iDEA
+3D Vehicle Simulator
