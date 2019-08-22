@@ -20,6 +20,7 @@ class Car{
       this._mass = mass;
       this.frontVector = new THREE.Vector3( 1, 0, 0 );
       this.speed = new THREE.Vector3( 0, 0, 0 );
+      this._differential_rot = 0;
       this.rotationalSpeed = new THREE.Euler( 0, 0, 0 );
       this.center = new THREE.Vector3( 0, 2 * wheel.R, 0 );
       this.length = max - min;
@@ -30,12 +31,13 @@ class Car{
       this._wheel = wheel;
       this.group = new THREE.Group();
       this.group.add(this.wheelGroup);
-      this.carMesh = new THREE.Mesh( carGeo, new THREE.MeshPhysicalMaterial() );//new THREE.BoxGeometry( 30, 4, 18).translate( 0, 3, 0 ), new THREE.MeshPhysicalMaterial());
+      this.carMesh = new THREE.Mesh( carGeo, new THREE.MeshPhysicalMaterial(/*{wireframe : true}*/) );//new THREE.BoxGeometry( 30, 4, 18).translate( 0, 3, 0 ), new THREE.MeshPhysicalMaterial());
+
       this.group.add(this.carMesh);
     }
     rotateWheels( timestep ) {
       for ( var i = 0; i < this.wheelGroup.children.length; i++ ) {
-        this.wheelGroup.children[i].rotation.z -= this.speed.length() / ( this._wheel.R *  Math.PI / 2) * timestep * Math.sign(this.wheelGroup.children[i].position.z);
+        this.wheelGroup.children[i].rotation.z -= this.speed.x / ( this._wheel.R *  Math.PI / 2) * timestep * Math.sign(this.wheelGroup.children[i].position.z);
       }
     }
     moveCar( timestep ) {
@@ -55,9 +57,22 @@ class Car{
       this.wheelGroup.children[2].rotation.y = this.ackermanSteering.steeringWheelPosition * (this.ackermanSteering.steeringWheelPosition < 0 ? 1 : 0.7);
       this.wheelGroup.children[3].rotation.y = - this.ackermanSteering.steeringWheelPosition * (this.ackermanSteering.steeringWheelPosition > 0 ? 1 : 0.7);
     }
-    updateLoad( timestep ) {
-      this.engine._currentTorque = 4;
+
+    updateLoad( ) {
+      this.engine._load_inertia = this._mass * this._wheel.R / 100 * (this.transmission.gear === false ? 0 : Math.abs(this.transmission.gearbox[this.transmission.gear]) );
+      // console.log(this.engine._load_inertia);
     }
+
+    updateClutchConnection( timestep ) {
+      let transmission_rot = this._differential_rot / (this.transmission.gear === false ? 1 : this.transmission.gearbox[this.transmission.gear] );
+      let totalInertia = this.engine._rot * this.engine._shaft_inertia + transmission_rot * this.engine._load_inertia;
+      // console.log(this.engine._rot, this._differential_rot);
+      this.engine._rot += (transmission_rot - this.engine._rot) * this.engine._load_inertia / ( this.engine._load_inertia + this.engine._shaft_inertia ) * timestep * this.transmission.clutch;
+      let posterior_transmission_rot = transmission_rot + (this.engine._rot - transmission_rot) * this.engine._shaft_inertia / ( this.engine._load_inertia + this.engine._shaft_inertia ) * timestep * this.transmission.clutch;
+      this._differential_rot = this.transmission.gear !== false ? posterior_transmission_rot * this.transmission.gearbox[this.transmission.gear] : this.speed.x / this._wheel.R * 10;
+      this.speed.x = this._differential_rot * this._wheel.R / 10;
+    }
+
     static makeCarGeo( frontToRearPoints, wheelsCentersPositions, radius, width, bevelThickness) {
       var extrudeShape = new THREE.Shape();
 			extrudeShape.moveTo( frontToRearPoints[0][0], frontToRearPoints[0][1] );
