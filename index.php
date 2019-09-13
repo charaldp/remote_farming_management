@@ -34,20 +34,21 @@
 
 	<script>
 
-	var group, camera, HUD, overlay, componentsInfo, sound, componentsUUID, scene, renderer, INTERSECTED, childs, car, acceleration, steerAcceleration;
+	var group, camera, HUD, overlay, componentsInfo, sound, componentsUUID, scene, renderer, INTERSECTED, childs, car;
 	var steerSpeed = 0;
 	var timer1 = 0;
-	var timer2 = 0.04;
-	var timestep = 0;
+	var timer2 = 0;
+	var frameBuffer = [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ];
+	var timestep = 0.01;
 	var throttle = 1;
 	var brake = 0;
-	var transmission = {clutch: 0, gear: false, gearbox: [ -1, 1.13, 1.72, 2.3, 2.8, 3.3, 3.7 ] };
+	var transmission = {clutch: 1, clutchFrictionCoeff: 0, gear: false, gearbox: [ -0.15, 0.163, 0.262, 0.38, 0.52, 0.68, 0.87 ] };
 	// var transmission = {clutch: 0, gear: false, gearbox: [ -0.2, 0.48, 0.43, 0.37, 0.30, 0.22, 0.13 ] };
-	var speed = new THREE.Vector3();
 	var up = false,
     right = false,
     down = false,
-    left = false;
+    left = false,
+		clutch = false;
 	var clickInfo = {
 	  x: 0,
 	  y: 0,
@@ -100,13 +101,14 @@
 		function init() {
 			scene = new THREE.Scene();
 			group = new THREE.Group();
-			var wheel = new Wheel( 5, 4.3, 1.5, 'Flat', { DO: 5, DI: 4.3, t: 1.5 }, 'Ribs', { DO: 4.3, DI: 4, t: 1.5, intrWidth:  0.22, numRibs: 12, tRib: 0.15,
-				 dRib: 0.30, ribsPosition: 1.2, axleIntrWidth: -0.1, axleDI: 0.1 , axleDO: 0.8, tAxle: 0.2 }, 0.4, {}, meshMaterial);
+			var wheel = new Wheel( 0.5, 0.43, 0.15, 'Flat', { DO: 0.5, DI:0.43, t: 0.15 }, 'Ribs', { DO: 0.43, DI: 0.4, t: 0.15, intrWidth:  0.022, numRibs: 12, tRib: 0.015,
+				 dRib: 0.030, ribsPosition: 0.12, axleIntrWidth: -0.01, axleDI: 0.01 , axleDO: 0.08, tAxle: 0.02 }, 0.04, {}, meshMaterial);
 			acceleration = 0;
-			var engine = new Engine( 2, 6000 / 60, 1050 / 60, 90 );//I = M / 2 * R ^ 2 [kg*m^2]
-			var car_geo = Car.makeCarGeo( /*2D front to rear points*/[ [17, 0], [16.8, 0.5], [16.7, 1.9], [17, 2.5], [16.9, 3.2], [16.7, 3.4], [5.5, 4.7], [1, 6.5], [-7, 6.7],
-				 [-13, 4], [-17.9, 4.1], [-18, 4], [-18, 0.9], [-18.5, 0.9], [-18.5, 0] ], [ -10, 10 ] , 2.7, 19, 0.5 );
-			car = new Car( wheel, [new THREE.Vector2( - 10, 8 ), new THREE.Vector2( 10, 8 )], engine, 200, transmission, car_geo);
+			var engine = new Engine( 50, 7000 / 60, 1050 / 60, 390, transmission.clutch );//I = M / 2 * R ^ 2 [kg*m^2]
+			var car_geo = Car.makeCarGeo( /*2D front to rear points*/[ [1.7, 0], [1.68, 0.05], [1.67, 0.19], [1.7, 0.25], [1.69, 0.32], [1.67, 0.34], [0.55, 0.47], [0.1, 0.65], [-0.7, 0.67],
+				 [-1.3,  0.4], [-1.79, 0.41], [-1.8, 0.4], [-1.8, 0.09], [-1.85, 0.09], [-1.85, 0] ], [ -1, 1 ], 0.27, 1.9, 0.05 );
+		  var spawnPosition = { position : new THREE.Vector3( 0, 0, 0 ), rotation : 0 };
+			car = new Car( wheel, [new THREE.Vector2( - 1, 0.8 ), new THREE.Vector2( 1, 0.8 )], engine, 2000, transmission, car_geo, spawnPosition, -1);
 			var components = [car];
 			var physics = new Phys( 9.81, 0.8, 1, [] );
 			renderer = new THREE.WebGLRenderer( { antialias: true } );
@@ -144,7 +146,7 @@
 			sceneCenter = sceneGeometry.boundingSphere.center.clone();
 			console.log(sceneCenter);
 			// camera
-			camera = new THREE.PerspectiveCamera( 40, window.innerWidth / window.innerHeight, 1, 50 * totalLength);
+			camera = new THREE.PerspectiveCamera( 40, window.innerWidth / window.innerHeight, 1, 1000 * totalLength);
 			camera.position.set( car.center.x - totalLength, car.center.y + totalLength, 0 );
 			scene.add( camera );
 
@@ -163,7 +165,7 @@
 			// controls
 			controls = new THREE.OrbitControls( camera, renderer.domElement );
 			controls.minDistance = totalLength / 10;
-			controls.maxDistance = 10 * totalLength;
+			controls.maxDistance = 100 * totalLength;
 			controls.target0 = car.center;
 			controls.target = car.center;
 			controls.maxPolarAngle = Math.PI * 2;
@@ -235,12 +237,19 @@
 			// group.add(new THREE.Mesh(sceneGeometry.clone(), meshMaterial.outside.clone()));
 
 			// Add ground plane
-			var planeGeo = new THREE.PlaneGeometry( 100 * totalLength, 100 * totalLength );
+			var planeGeo = new THREE.PlaneGeometry( 1000 * totalLength, 1000 * totalLength );
 			var material = new THREE.MeshBasicMaterial( { color: 0x77aa22, side: THREE.FrontSide, opacity: 0.65, transparent: true } );
 			var plane = new THREE.Mesh( planeGeo, material );
 			plane.rotation.x = - Math.PI / 2;
 			plane.position.y = - 0.0001 * totalLength;
 			scene.add(plane);
+			var buildingsGeo = new THREE.Geometry();
+			for ( i = 0; i < 2000 ; i++ ) {
+				let height = Math.random() * 20 + 10;
+				buildingsGeo.merge(new THREE.BoxGeometry(Math.random() * 20 + 10, height,Math.random() * 20 + 10 ).translate( (Math.random() * 1000 - 500) * totalLength, height / 2, (Math.random() * 1000 - 500) * totalLength ));
+			}
+			var buildingsMesh = new THREE.Mesh( buildingsGeo, meshMaterial.outside );
+			scene.add(buildingsMesh);
 
 			// Add components
 			for (var i = 0; i < components.length;i++) {
@@ -249,7 +258,6 @@
 				group.add(components[i].group);
 				// console.log(componentsUUID[i]);
 			}
-			console.log(controls);
 			childs = [];
 			console.log( group.children );
 			for ( var i = 0; i < group.children.length; i++)
@@ -289,16 +297,19 @@
 		document.addEventListener( 'keydown', press )
 		function press(e){
 		  if (e.keyCode === 38 /* up */ ){
-		    up = true
+		    up = true;
 		  }
 		  if (e.keyCode === 39 /* right */ ){
-		    right = true
+		    right = true;
 		  }
 		  if (e.keyCode === 40 /* down */ ){
-		    down = true
+		    down = true;
 		  }
 		  if (e.keyCode === 37 /* left */ ){
-		    left = true
+		    left = true;
+		  }
+			if (e.keyCode === 86 /* left */ ){
+		    clutch = true;
 		  }
 
 			switch ( e.keyCode ) {
@@ -326,7 +337,7 @@
 				// default:
 				// 	car.transmission.gear = false; !!! Wrong! Key release will do the job
 			}
-			console.log(e.keyCode);// space === 32
+			// console.log(e.keyCode);// space === 32
 
 		}
 		document.addEventListener( 'keyup', release )
@@ -343,6 +354,10 @@
 		  if (e.keyCode === 37 /* left */){
 		    left = false
 		  }
+			if (e.keyCode === 86 /* left */){
+		    clutch = false
+		  }
+
 			switch ( e.keyCode ) {
 				case 81: /* q */
 					if (car.transmission.gear === 1)
@@ -384,40 +399,38 @@
 			// acceleration = (up ? 1 : 0) - (down ? 1 : 0) - (!(up || down) ? 0.5 * Math.sign(car.speed.x) : 0);
 
 			timestep = timer2 - timer1;
-			// console.log( car.engine._load_inertia);
+			// console.log( car.engine._idle_rot);
 			timer1 = performance.now();
-			overlay.innerHTML = 'Framerate : ' + String( ( 1000 / timestep ).toFixed() ) +  ' FPS';
+			frameBuffer.push( 1000 / timestep );
+			overlay.innerHTML = 'Framerate : ' + String( ( frameBuffer.reduce((a, b) => a + b, 0) / 10 ).toFixed() ) +  ' FPS';
+			// console.log( frameBuffer.length );
+			frameBuffer.shift();
 			throttle += ( up ? ( throttle < 2 ? 0.05 * timestep : 0 ) : ( throttle > 1 ? - 0.1 * timestep * (throttle - 1) : 0 ) );
 			brake += ( down ? ( brake < 1 ? 0.2 * timestep : 0 ) : ( brake > 0 ? - 0.4 * timestep * brake : 0 ) );
 			steerSpeed = (left ? 0.6 * timestep : 0) - (right ? 0.6 * timestep : 0) - (!(left || right) ?  timestep * car.ackermanSteering.steeringWheelPosition : 0);
-			car.transmission.clutch += car.transmission.gear !== false ? (car.transmission.clutch < 1 ? 0.1 * timestep : 0 ) : (car.transmission.clutch > 0 ? - 0.05 * timestep * car.transmission.clutch : 0 );
+			car.transmission.clutch += !clutch ? (car.transmission.clutch < 1 ? 0.05 * timestep : 0 ) : (car.transmission.clutch > 0 ? - 0.05 * timestep * car.transmission.clutch : 0 );
 			HUD.innerHTML = 'Engine RPM : ' + String( (car.engine._rot * 60).toFixed() ) +
-				' , Speed : ' + String( (car.speed.length()).toFixed() ) +
+				' , Speed : ' + String( ( car.speed.length() * 3.6 ).toFixed(1) ) +
 				' , Throttle : ' + String( throttle.toFixed(1) ) +
 				' , Gear : ' + String( transmission.gear === false ? 'N' : (transmission.gear !== 0 ? transmission.gear : 'R') ) +
-				' , Accelaration : ' + String( acceleration.toFixed(1) ) +
+				' , Accelaration : ' + String( car.acceleration.x.toFixed(1) ) +
 				' , Brake : ' + String( brake.toFixed(1) ) +
 				' , Steering : ' +	String( (car.ackermanSteering.steeringWheelPosition).toFixed(1) ) +
 				' , Clutch : ' + String( car.transmission.clutch.toFixed(1) ) +
 				' , Power : ' + String( car.engine._currentPower.toFixed() ) +
 				' , Torque : ' + String( car.engine._currentTorque.toFixed() );
-			// steerSpeed += steerAcceleration;
-			car.acceleration = acceleration;
 			// sound.setVolume(Math.min(Math.abs(speed.length()) / 20, 0.5));
-			car.rotateWheels( timestep * 0.1 );
+			car.rotateWheels( timestep / 1 );
 			// console.log(car.speed.length());
 			// car.speed.x = car.engine._rot * (car.transmission.gear === false ? 0 : car.transmission.gearbox[car.transmission.gear] ) * car.transmission.clutch;
-			car.moveCar( timestep * 0.1 );
-			car.engine.updateEngineState(throttle, timestep * 0.1);
+			car.engine.updateEngineState( throttle, timestep / 1 );
 			car.updateLoad();
-			car.updateClutchConnection( timestep * 0.1 );
-			sound.setPlaybackRate( car.engine._rot / car.engine._idle_rot * 0.9 );
-			car.steerWheels( timestep* 0.1, steerSpeed );
-			camera.position.x += car.speed.x * timestep* 0.1;
-			camera.position.y += car.speed.y * timestep* 0.1;
-			camera.position.z += car.speed.z * timestep* 0.1;
-			// ( car.center.x - car.length * car.frontVector.x, car.center.y + car.length, car.center.z - car.length * car.frontVector.z );
-			renderer.render( scene, camera );
+			car.updateClutchConnection( timestep / 10 );
+			sound.setPlaybackRate( isNaN(car.engine._rot) ? 1 : car.engine._rot / car.engine._idle_rot * 0.9 );
+			car.steerWheels( timestep / 1000, steerSpeed );
+			car.moveCar( timestep / 1 );
+			camera.position.add((car.speed.clone()).multiplyScalar(timestep / 1));
+ 			renderer.render( scene, camera );
 			timer2 = performance.now();
 		}
 		window.addEventListener( 'mousemove', onMouseMove, false );
