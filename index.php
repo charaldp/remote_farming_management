@@ -410,10 +410,10 @@
 			steerSpeed = (left ? 0.6 * timestep : 0) - (right ? 0.6 * timestep : 0) - (!(left || right) ?  timestep * car.ackermanSteering.steeringWheelPosition : 0);
 			car.transmission.clutch += !clutch ? (car.transmission.clutch < 1 ? 0.05 * timestep : 0 ) : (car.transmission.clutch > 0 ? - 0.05 * timestep * car.transmission.clutch : 0 );
 			HUD.innerHTML = 'Engine RPM : ' + String( (car.engine._rot * 60).toFixed() ) +
-				' , Speed : ' + String( ( car.speed.length() * 3.6 ).toFixed(1) ) +
+				' , Speed : ' + String( ( car.speed * 3.6 ).toFixed(1) ) +
 				' , Throttle : ' + String( throttle.toFixed(1) ) +
 				' , Gear : ' + String( transmission.gear === false ? 'N' : (transmission.gear !== 0 ? transmission.gear : 'R') ) +
-				' , Accelaration : ' + String( car.acceleration.x.toFixed(1) ) +
+				' , Accelaration : ' + String( car.acceleration.toFixed(1) ) +
 				' , Brake : ' + String( brake.toFixed(1) ) +
 				' , Steering : ' +	String( (car.ackermanSteering.steeringWheelPosition).toFixed(1) ) +
 				' , Clutch : ' + String( car.transmission.clutch.toFixed(1) ) +
@@ -427,9 +427,11 @@
 			car.updateLoad();
 			car.updateClutchConnection( timestep / 10 );
 			sound.setPlaybackRate( isNaN(car.engine._rot) ? 1 : car.engine._rot / car.engine._idle_rot * 0.9 );
-			car.steerWheels( timestep / 1000, steerSpeed );
-			car.moveCar( timestep / 1 );
-			camera.position.add((car.speed.clone()).multiplyScalar(timestep / 1));
+			car.steerWheels( timestep / 10, steerSpeed );
+			// car.moveCar( timestep / 1 );
+			car.applyTransformation( timestep / 1 );
+			console.log(car.ackermanSteering.ackermanPoint);
+			camera.position.add((car.frontVector.clone()).multiplyScalar(car.speed * timestep / 1));
  			renderer.render( scene, camera );
 			timer2 = performance.now();
 		}

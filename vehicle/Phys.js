@@ -6,7 +6,7 @@ class Phys {
   }
 
   static clutchSigmoidFrictionCoeff( x, sigma_sq /* 15 */, synchronizationCoeff ) {
-    return ( 1 + 1 * Phys.distributionFunction( 1, 0.05, synchronizationCoeff ) ) * Phys.activationFunction( x, 0.5, sigma_sq );
+    return ( 1 + 10 * Phys.distributionFunction( 1, 0.05, synchronizationCoeff ) ) * Phys.activationFunction( x, 0.5, sigma_sq );
   }
 
   static activationFunction( x, center, sigma_sq /* 15 */ ) {
