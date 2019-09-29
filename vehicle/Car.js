@@ -1,34 +1,54 @@
 class Car{
-    constructor( wheel, wheelsPositions, engine, mass, transmission, carGeo, spawnPosition /*[Coordinate Vector, Spawn Rotation (Degrees)]*/, steeringCenter ) {
+    constructor( wheel, wheelsPositions, engine, mass, transmission, carGeo, spawnPosition /*[Coordinate Vector, Spawn Rotation (Degrees)]*/, camera, steeringCenter ) {
       this.wheelGroup = new THREE.Group();
       if ( wheel instanceof Wheel ) {
-        var min = 0, max = 0;
+        this.min = 0;
+        this.max = 0;
         for ( var i = 0; i < wheelsPositions.length; i++ ) {
-          wheel.group.position.x = wheelsPositions[i].x;
-          wheel.group.position.z = wheelsPositions[i].y;
-          if(wheelsPositions[i].x > 0) this.frontWheelsAxlesWidth = 2 * wheelsPositions[i].y;
+          //wheel.group.position.x = wheelsPositions[i].x;
+          //wheel.group.position.z = wheelsPositions[i].y;
+          if( wheelsPositions[i].x > 0) this.frontWheelsAxlesWidth = 2 * wheelsPositions[i].y;
           this.wheelGroup.add(wheel.group.clone())
-          wheel.group.rotation.y = Math.PI;
-          wheel.group.position.z *= -1;
+          //wheel.group.rotation.y = Math.PI;
+          //wheel.group.position.z *= -1;
           this.wheelGroup.add(wheel.group.clone())
-          wheel.group.rotation.y = 0;
-          if (wheel.group.position.x > max) max = wheel.group.position.x;
-          if (wheel.group.position.x < min) min = wheel.group.position.x;
+          //wheel.group.rotation.y = 0;
+          if (wheelsPositions[i].x > this.max) this.max = wheelsPositions[i].x;
+          if (wheelsPositions[i].x < this.min) this.min = wheelsPositions[i].x;
 
         }
-        wheel.group.position.add(spawnPosition.position);
-        wheel.group.rotation.y = spawnPosition.rotation * Math.PI / 180;
+      }
+      this.upVector = new THREE.Vector3( 0, 1, 0 );
+      this.frontVector = new THREE.Vector3( 1, 0, 0 ).applyAxisAngle( this.upVector, spawnPosition.rotation * Math.PI / 180 );
+      this.camera = camera;
+      this.wheelMatrices = [];
+      for ( var i = 0; i < this.wheelGroup.children.length; i++ ) {
+        this.wheelMatrices.push([new THREE.Matrix4(), new THREE.Matrix4()]);
+        this.wheelMatrices[i][0].makeRotationAxis( this.upVector,  Math.PI * ( i % 2 == 0 ? 1 : 0 ) );
+        this.wheelMatrices[i][0].setPosition( new THREE.Vector3(wheelsPositions[ Math.floor(i / 2)].x, wheel.R, wheelsPositions[ Math.floor(i / 2)].y * ( i % 2 == 0 ? -1 : 1 ) ));
+        this.wheelMatrices[i][1].copy(this.wheelMatrices[i][0]);
+        // this.wheelQuaternions[i];
+        console.log(this.wheelMatrices[i], wheelsPositions[ Math.floor(i / 2)].y);
       }
       this.engine = engine;
       this.transmission = transmission;
       this._mass = mass;
-      this.frontVector = new THREE.Vector3( 1, 0, 0 ).applyAxisAngle(new THREE.Vector3( 0, 1, 0 ), spawnPosition.rotation * Math.PI / 180 );
       this.speed = 0;//new THREE.Vector3( 0, 0, 0 );
       this.acceleration = 0;//new THREE.Vector3( 0, 0, 0 );
       this._differential_rot = 0;
       this.rotationalSpeed = new THREE.Euler( 0, 0, 0 );
-      this.center = (new THREE.Vector3( 0, 2 * wheel.R, 0 )).add( spawnPosition.position );
-      this.length = max - min;
+      this.centerTransformation = new THREE.Matrix4();
+      this.centerTransformation.makeRotationAxis(  this.upVector, spawnPosition.rotation * Math.PI / 180 );
+      this.centerTransformation.setPosition( spawnPosition.position );
+      this.center = new THREE.Vector3( this.centerTransformation[12], this.centerTransformation[13], this.centerTransformation[14] );
+      for ( var i = 0; i < this.wheelGroup.children.length; i++ ) {
+        this.wheelGroup.children[i].matrixAutoUpdate = false;
+        this.wheelGroup.children[i].matrix.copy( (this.centerTransformation.clone()).multiply(this.wheelMatrices[i][1]) );
+        // if ( this.wheelGroup.children[i].matrixWorld.determinant() !== 0 )
+          // this.wheelGroup.children[i].setRotationFromMatrix ( this.wheelGroup.children[i].matrix );
+      }
+      this.length = this.max - this.min;
+      console.log(this.length);
       this.ackermanSteering = {
         maxWheelSteer: 50 * Math.PI / 180 /*50 degrees max*/,
         ackermanPoint: 'Nan' /* 'Nan': rotating around a point at infinite a.k.a. Going Straight*/,
@@ -37,14 +57,15 @@ class Car{
       this.group = new THREE.Group();
       this.group.add(this.wheelGroup);
       this.carMesh = new THREE.Mesh( carGeo, new THREE.MeshPhysicalMaterial(/*{wireframe : true}*/) );//new THREE.BoxGeometry( 30, 4, 18).translate( 0, 3, 0 ), new THREE.MeshPhysicalMaterial());
-
+      this.carMesh.matrixAutoUpdate = false;
+      this.carMesh.setRotationFromMatrix( this.centerTransformation );
       this.group.add(this.carMesh);
     }
+
     rotateWheels( timestep ) {
-      for ( var i = 0; i < this.wheelGroup.children.length; i++ ) {
-        this.wheelGroup.children[i].rotation.z -= this.speed / ( this._wheel.R *  Math.PI / 2) * timestep * Math.sign(this.wheelGroup.children[i].position.z);
-      }
+
     }
+
     // moveCar( timestep ) {
     //   for ( var i = 0; i < this.wheelGroup.children.length; i++ ) {
     //     this.wheelGroup.children[i].position.x += this.speed.x * timestep;
@@ -56,13 +77,17 @@ class Car{
     //   this.carMesh.position.z += this.speed.z * timestep;
     //   this.center.add(this.speed.clone().multiplyScalar(timestep));
     // }
-    steerWheels( timestep, steerSpeed ) {
+    updateWheelTransformation( timestep, steerSpeed ) {
       this.ackermanSteering.steeringWheelPosition += steerSpeed * timestep;
       if (Math.abs(this.ackermanSteering.steeringWheelPosition) > this.ackermanSteering.maxWheelSteer ) this.ackermanSteering.steeringWheelPosition = Math.sign(this.ackermanSteering.steeringWheelPosition) * this.ackermanSteering.maxWheelSteer;
       // th_out = acot(cot(th_in) - d / l)
       let th_out = Math.PI / 2 - Math.atan( 1 / Math.tan( Math.abs(this.ackermanSteering.steeringWheelPosition) ) + this.frontWheelsAxlesWidth / this.length );
-      this.wheelGroup.children[2].rotation.y = this.ackermanSteering.steeringWheelPosition < 0 ? this.ackermanSteering.steeringWheelPosition : th_out;
-      this.wheelGroup.children[3].rotation.y = this.ackermanSteering.steeringWheelPosition > 0 ? - this.ackermanSteering.steeringWheelPosition : th_out;
+      for ( var i = 0; i < this.wheelMatrices.length; i++ ) {
+        if ( i == 2 || i == 3 )
+          this.wheelMatrices[i][1].copy(this.wheelMatrices[i][0].clone().multiply((new THREE.Matrix4()).makeRotationY( (i - 2.5/* Index 2 and3*/) * this.ackermanSteering.steeringWheelPosition < 0 ? this.ackermanSteering.steeringWheelPosition : Math.sign(this.ackermanSteering.steeringWheelPosition) * th_out )).multiply((new THREE.Matrix4()).makeRotationZ( -this.speed / ( this._wheel.R *  Math.PI / 2) * timestep * ( i % 2 == 0 ? 1 : -1 ))));
+        else
+          this.wheelMatrices[i][1].copy(this.wheelMatrices[i][0].clone().multiply((new THREE.Matrix4()).makeRotationZ( -this.speed / ( this._wheel.R *  Math.PI / 2) * timestep * ( i % 2 == 0 ? 1 : -1 ))));
+      }
       this.ackermanSteering.ackermanPoint = ( this.ackermanSteering.steeringWheelPosition > 0 ? 1 : -1 ) * ( this.length / Math.tan(th_out) - this.frontWheelsAxlesWidth / 2 );
     }
 
@@ -90,22 +115,31 @@ class Car{
     }
 
     applyTransformation( timestep ) {
-      if (isFinite( this.ackermanSteering.ackermanPoint )) {
-        let theta = timestep * this.speed / this.ackermanSteering.ackermanPoint / 2 / Math.PI ;
-        let shift = ( this.frontVector.clone() ).multiplyScalar( Math.sign(this.speed) * 2 * Math.abs(this.ackermanSteering.ackermanPoint) * Math.sin( theta / 2 ));
-        this.carMesh.position.add( shift );
-        this.center.add( shift );
+      var transformation = new THREE.Matrix4();
+      if ( isFinite( this.ackermanSteering.ackermanPoint )) {
+        let theta = timestep * this.speed / ( 2 * Math.PI * this.ackermanSteering.ackermanPoint );
+        transformation.makeRotationAxis( this.upVector, theta );
+        let XO = (this.upVector.clone()).cross( this.frontVector.clone() ).multiplyScalar( this.ackermanSteering.ackermanPoint ).add( this.frontVector.clone().multiplyScalar(this.min) );
+        let OX_dot = ((XO.clone()).negate()).applyAxisAngle( this.upVector, theta );
+        let shift = XO.add( OX_dot )/*.add( (this.frontVector.clone()).multiplyScalar(this.min) )*/;
+        transformation.setPosition( shift.clone() );
+        this.centerTransformation.multiply( transformation );
         for ( var i = 0; i < this.wheelGroup.children.length; i++ )
-          this.wheelGroup.children[i].position.add(shift);
-        this.frontVector.applyAxisAngle(new THREE.Vector3( 0, 1, 0 ), theta );
-        this.carMesh.rotation.y += theta;
+          this.wheelGroup.children[i].matrix.copy( (this.centerTransformation.clone()).multiply(this.wheelMatrices[i][1]) );
+        let quaternion = new THREE.Quaternion();
+        this.centerTransformation.decompose ( [], quaternion, [] );
+        this.frontVector.copy((new THREE.Vector3( 1, 0, 0 )).applyQuaternion(quaternion));
       } else {
-        this.carMesh.position.add((this.frontVector.clone()).multiplyScalar(timestep * this.speed));
-        this.center.add(this.frontVector.clone().multiplyScalar(this.speed * timestep));
+        transformation.setPosition( this.frontVector.clone().multiplyScalar( this.speed * timestep ) );
+        this.centerTransformation.multiply( transformation );
         for ( var i = 0; i < this.wheelGroup.children.length; i++ )
-          this.wheelGroup.children[i].position.add((this.frontVector.clone()).multiplyScalar(timestep * this.speed));
-        // moveCar( timestep )
+          this.wheelGroup.children[i].matrix.copy( (this.centerTransformation.clone()).multiply(this.wheelMatrices[i][1]) );
       }
+
+      this.carMesh.matrix.copy(this.centerTransformation);
+      console.log(this.frontVector.length());
+      this.center.set( this.centerTransformation.elements[12], this.centerTransformation.elements[13], this.centerTransformation.elements[14] );
+      this.camera.position.add( new THREE.Vector3( transformation.elements[12], transformation.elements[13], transformation.elements[14] ) );
     }
 
     static makeCarGeo( frontToRearPoints, wheelsCentersPositions, radius, width, bevelThickness) {

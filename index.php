@@ -58,6 +58,7 @@
 		currentUUID: [ '', '' ]
 	};
 	var grav = 9.87;
+	var cameraOffset = new THREE.Vector3();
 	var raycaster = new THREE.Raycaster();
 	var mouse = new THREE.Vector2();
 	var components = [];
@@ -108,7 +109,7 @@
 			var car_geo = Car.makeCarGeo( /*2D front to rear points*/[ [1.7, 0], [1.68, 0.05], [1.67, 0.19], [1.7, 0.25], [1.69, 0.32], [1.67, 0.34], [0.55, 0.47], [0.1, 0.65], [-0.7, 0.67],
 				 [-1.3,  0.4], [-1.79, 0.41], [-1.8, 0.4], [-1.8, 0.09], [-1.85, 0.09], [-1.85, 0] ], [ -1, 1 ], 0.27, 1.9, 0.05 );
 		  var spawnPosition = { position : new THREE.Vector3( 0, 0, 0 ), rotation : 0 };
-			car = new Car( wheel, [new THREE.Vector2( - 1, 0.8 ), new THREE.Vector2( 1, 0.8 )], engine, 2000, transmission, car_geo, spawnPosition, -1);
+			car = new Car( wheel, [new THREE.Vector2( - 1, 0.8 ), new THREE.Vector2( 1, 0.8 )], engine, 2000, transmission, car_geo, spawnPosition, camera, -1);
 			var components = [car];
 			var physics = new Phys( 9.81, 0.8, 1, [] );
 			renderer = new THREE.WebGLRenderer( { antialias: true } );
@@ -146,8 +147,11 @@
 			sceneCenter = sceneGeometry.boundingSphere.center.clone();
 			console.log(sceneCenter);
 			// camera
+			cameraOffset.set( - 2 * totalLength, totalLength / 2, 0 );
 			camera = new THREE.PerspectiveCamera( 40, window.innerWidth / window.innerHeight, 1, 1000 * totalLength);
-			camera.position.set( car.center.x - totalLength, car.center.y + totalLength, 0 );
+			camera.position.copy( (car.center.clone()).add(cameraOffset.applyAxisAngle(new THREE.Vector3( 0, 1, 0 ), Math.atan(car.frontVector.z / car.frontVector.x))));
+			// camera.matrixAutoUpdate = false;
+			car.camera = camera;
 			scene.add( camera );
 
 			var listener = new THREE.AudioListener();
@@ -268,6 +272,7 @@
 						for ( var k = 0; k < group.children[i].children[j].children.length; k++)
 							childs.push( group.children[i].children[j].children[k] );
 
+			 scene.autoUpdate = false;
 		}
 
 		function onMouseMove( event ) {
@@ -420,18 +425,22 @@
 				' , Power : ' + String( car.engine._currentPower.toFixed() ) +
 				' , Torque : ' + String( car.engine._currentTorque.toFixed() );
 			// sound.setVolume(Math.min(Math.abs(speed.length()) / 20, 0.5));
-			car.rotateWheels( timestep / 1 );
+			// car.rotateWheels( timestep / 10 );
 			// console.log(car.speed.length());
 			// car.speed.x = car.engine._rot * (car.transmission.gear === false ? 0 : car.transmission.gearbox[car.transmission.gear] ) * car.transmission.clutch;
 			car.engine.updateEngineState( throttle, timestep / 1 );
 			car.updateLoad();
 			car.updateClutchConnection( timestep / 10 );
-			sound.setPlaybackRate( isNaN(car.engine._rot) ? 1 : car.engine._rot / car.engine._idle_rot * 0.9 );
-			car.steerWheels( timestep / 10, steerSpeed );
+			sound.setPlaybackRate( isNaN(car.engine._rot) ? 0 : car.engine._rot / car.engine._idle_rot * 0.9 );
+			car.updateWheelTransformation( timestep / 10, steerSpeed );
 			// car.moveCar( timestep / 1 );
-			car.applyTransformation( timestep / 1 );
-			console.log(car.ackermanSteering.ackermanPoint);
-			camera.position.add((car.frontVector.clone()).multiplyScalar(car.speed * timestep / 1));
+			car.applyTransformation( timestep / 10 );
+			scene.updateMatrixWorld();
+			// console.log(car.centerTransformation);
+			controls.target.copy(car.center);
+			controls.update();
+			// camera.position.copy( (car.center.clone()).sub(cameraOffset.applyAxisAngle(new THREE.Vector3( 0, 1, 0 ), Math.atan(car.frontVector.z / car.frontVector.x))));
+			// camera.position.add((car.frontVector.clone()).multiplyScalar(car.speed * timestep / 10));
  			renderer.render( scene, camera );
 			timer2 = performance.now();
 		}
