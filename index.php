@@ -34,7 +34,7 @@
 
 	<script>
 
-	var group, camera, HUD, overlay, componentsInfo, sound, componentsUUID, scene, renderer, INTERSECTED, childs, car;
+	var group, camera, HUD, overlay, sound, scene, renderer, childs, car;
 	var steerSpeed = 0;
 	var timer1 = 0;
 	var timer2 = 0;
@@ -49,25 +49,13 @@
     down = false,
     left = false,
 		clutch = false;
-	var clickInfo = {
-	  x: 0,
-	  y: 0,
-		clickCounter: 0,
-	  userHasClicked: false,
-		userHasRightClicked: false,
-		currentUUID: [ '', '' ]
-	};
-	var grav = 9.87;
+
 	var cameraOffset = new THREE.Vector3();
 	var raycaster = new THREE.Raycaster();
-	var mouse = new THREE.Vector2();
 	var components = [];
-	componentsInfo = [];
-	componentsUUID = [];
 	var sceneGeometry = new THREE.Geometry();
 	var totalLength = 0; // Total length is normalized and is used to preview the full !scaled! scene
 	var sceneCenter = new THREE.Vector3();
-	var componentIndices = [];
 	var dimDiv = 1; // This variable divides all dimension data in order to provide a better visualization
 	var utils = new Utils( dimDiv );
 	var outsideMeshMaterial = new THREE.MeshLambertMaterial({
@@ -103,7 +91,7 @@
 			scene = new THREE.Scene();
 			group = new THREE.Group();
 			var wheel = new Wheel( 0.5, 0.43, 0.15, 'Flat', { DO: 0.5, DI:0.43, t: 0.15 }, 'Ribs', { DO: 0.43, DI: 0.4, t: 0.15, intrWidth:  0.022, numRibs: 12, tRib: 0.015,
-				 dRib: 0.030, ribsPosition: 0.12, axleIntrWidth: -0.01, axleDI: 0.01 , axleDO: 0.08, tAxle: 0.02 }, 0.04, {}, meshMaterial);
+				 dRib: 0.030, ribsPosition: 0.12, axleIntrWidth: -0.01, axleDI: 0.01 , axleDO: 0.08, tAxle: 10.02 }, 0.04, {}, meshMaterial);
 			acceleration = 0;
 			var engine = new Engine( 50, 7000 / 60, 1050 / 60, 390, transmission.clutch );//I = M / 2 * R ^ 2 [kg*m^2]
 			var car_geo = Car.makeCarGeo( /*2D front to rear points*/[ [1.7, 0], [1.68, 0.05], [1.67, 0.19], [1.7, 0.25], [1.69, 0.32], [1.67, 0.34], [0.55, 0.47], [0.1, 0.65], [-0.7, 0.67],
@@ -256,12 +244,9 @@
 			scene.add(buildingsMesh);
 
 			// Add components
-			for (var i = 0; i < components.length;i++) {
-				// group.add(components[i].finalGroup);
-				// componentsUUID.push([ components[i].finalGroup.children[0].uuid, components[i].finalGroup.children[1].uuid ]);
+			for (var i = 0; i < components.length;i++)
 				group.add(components[i].group);
-				// console.log(componentsUUID[i]);
-			}
+
 			childs = [];
 			console.log( group.children );
 			for ( var i = 0; i < group.children.length; i++)
@@ -275,30 +260,6 @@
 			 scene.autoUpdate = false;
 		}
 
-		function onMouseMove( event ) {
-
-			// calculate mouse position in normalized device coordinates
-			// (-1 to +1) for both components
-			// acceleration = 0;
-			mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
-			mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
-
-		}
-		function onMouseClick ( event ) {
-		  // The user has clicked; let's note this event
-		  // and the click's coordinates so that we can
-		  // react to it in the render loop
-		  clickInfo.userHasClicked = true;
-		  clickInfo.x = event.clientX;
-		  clickInfo.y = event.clientY;
-			acceleration += 10;
-		}
-		function onRightClick ( event ) {
-			clickInfo.userHasRightClicked = true;
-		  clickInfo.x = event.clientX;
-		  clickInfo.y = event.clientY;
-			acceleration -= 10;
-		}
 		document.addEventListener( 'keydown', press )
 		function press(e){
 		  if (e.keyCode === 38 /* up */ ){
@@ -428,13 +389,13 @@
 			// car.rotateWheels( timestep / 10 );
 			// console.log(car.speed.length());
 			// car.speed.x = car.engine._rot * (car.transmission.gear === false ? 0 : car.transmission.gearbox[car.transmission.gear] ) * car.transmission.clutch;
-			car.engine.updateEngineState( throttle, timestep / 1 );
+
 			car.updateLoad();
-			car.updateClutchConnection( timestep / 10 );
+			car.updateClutchConnection( throttle, brake, timestep / 5 );
 			sound.setPlaybackRate( isNaN(car.engine._rot) ? 0 : car.engine._rot / car.engine._idle_rot * 0.9 );
-			car.updateWheelTransformation( timestep / 10, steerSpeed );
+			car.updateWheelTransformation( timestep / 5, steerSpeed );
 			// car.moveCar( timestep / 1 );
-			car.applyTransformation( timestep / 10 );
+			car.applyTransformation( timestep / 5 );
 			scene.updateMatrixWorld();
 			// console.log(car.centerTransformation);
 			controls.target.copy(car.center);
@@ -444,9 +405,7 @@
  			renderer.render( scene, camera );
 			timer2 = performance.now();
 		}
-		window.addEventListener( 'mousemove', onMouseMove, false );
-		window.addEventListener( 'click', onMouseClick, false );
-		window.addEventListener( 'contextmenu', onRightClick, false );
+
 		window.requestAnimationFrame(render);
 
 	</script>

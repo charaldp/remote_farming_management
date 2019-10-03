@@ -58,25 +58,10 @@ class Car{
       this.group.add(this.wheelGroup);
       this.carMesh = new THREE.Mesh( carGeo, new THREE.MeshPhysicalMaterial(/*{wireframe : true}*/) );//new THREE.BoxGeometry( 30, 4, 18).translate( 0, 3, 0 ), new THREE.MeshPhysicalMaterial());
       this.carMesh.matrixAutoUpdate = false;
-      this.carMesh.setRotationFromMatrix( this.centerTransformation );
+      this.carMesh.matrix.copy( this.centerTransformation );
       this.group.add(this.carMesh);
     }
 
-    rotateWheels( timestep ) {
-
-    }
-
-    // moveCar( timestep ) {
-    //   for ( var i = 0; i < this.wheelGroup.children.length; i++ ) {
-    //     this.wheelGroup.children[i].position.x += this.speed.x * timestep;
-    //     this.wheelGroup.children[i].position.y += this.speed.y * timestep;
-    //     this.wheelGroup.children[i].position.z += this.speed.z * timestep;
-    //   }
-    //   this.carMesh.position.x += this.speed.x * timestep;
-    //   this.carMesh.position.y += this.speed.y * timestep;
-    //   this.carMesh.position.z += this.speed.z * timestep;
-    //   this.center.add(this.speed.clone().multiplyScalar(timestep));
-    // }
     updateWheelTransformation( timestep, steerSpeed ) {
       this.ackermanSteering.steeringWheelPosition += steerSpeed * timestep;
       if (Math.abs(this.ackermanSteering.steeringWheelPosition) > this.ackermanSteering.maxWheelSteer ) this.ackermanSteering.steeringWheelPosition = Math.sign(this.ackermanSteering.steeringWheelPosition) * this.ackermanSteering.maxWheelSteer;
@@ -92,23 +77,29 @@ class Car{
     }
 
     updateLoad( ) {
-      this.engine._load_inertia = /*Phys.activationFunction( this.transmission.clutch, 0.5, 15 ) */ this._mass * this._wheel.R * (this.transmission.gear === false ? 0 : Math.abs(this.transmission.gearbox[this.transmission.gear]) );
+      this.engine._load_inertia = Phys.activationFunction( this.transmission.clutch, 0.5, 15 ) * this._mass * this._wheel.R * (this.transmission.gear === false ? 0 : Math.abs(this.transmission.gearbox[this.transmission.gear]) );
     }
 
-    updateClutchConnection( timestep ) {
-      // timestep /= 2;
+    updateClutchConnection( throttle, brake, timestep ) {
       let transmission_rot = this.transmission.gear === false ? this.engine._rot : this._differential_rot / this.transmission.gearbox[this.transmission.gear];
       let totalInertia = this.engine._rot * this.engine._shaft_inertia + transmission_rot * this.engine._load_inertia;
       let targetRot = (this.engine._rot * this.engine._shaft_inertia + transmission_rot * this.engine._load_inertia) / (this.engine._shaft_inertia + this.engine._load_inertia);
-      // console.log(this.engine._rot, this._differential_rot);
-      // console.log(this.engine._shaft_inertia, this.engine._load_inertia);
+
       let synchronizationCoeff = transmission_rot / this.engine._rot;
       this.transmission.clutchFrictionCoeff = Phys.clutchSigmoidFrictionCoeff(this.transmission.clutch, 15, synchronizationCoeff );
-      // console.log(this.transmission.clutchFrictionCoeff);
-      this.engine._rot += (targetRot - this.engine._rot) * (0.98, timestep * this.transmission.clutchFrictionCoeff * this.engine._load_inertia / ( this.engine._load_inertia + this.engine._shaft_inertia ) );
-      // console.log((0.98, timestep * this.transmission.clutchFrictionCoeff * this.engine._load_inertia / ( this.engine._load_inertia + this.engine._shaft_inertia )));
-      let posterior_transmission_rot = transmission_rot + (targetRot - transmission_rot) * ( 0.98, timestep * this.transmission.clutchFrictionCoeff * this.engine._shaft_inertia / ( this.engine._load_inertia + this.engine._shaft_inertia ) );
-      this._differential_rot = this.transmission.gear !== false ? posterior_transmission_rot * this.transmission.gearbox[this.transmission.gear] : this.speed / this._wheel.R;
+      if ( Math.abs(synchronizationCoeff - 1) > 0.01 || this.transmission.clutchFrictionCoeff < Phys.clutchSigmoidFrictionCoeff( 1, 15, 1 ) / 1.5 ) {
+        this.engine.updateEngineState( throttle, timestep, false );
+        // console.log(this.transmission.clutchFrictionCoeff);
+        this.engine._rot += (targetRot - this.engine._rot) * (0.98, timestep * this.transmission.clutchFrictionCoeff * this.engine._load_inertia / ( this.engine._load_inertia + this.engine._shaft_inertia ) );
+        // console.log((0.98, timestep * this.transmission.clutchFrictionCoeff * this.engine._load_inertia / ( this.engine._load_inertia + this.engine._shaft_inertia )));
+        let posterior_transmission_rot = transmission_rot + (targetRot - transmission_rot) * ( 0.98, timestep * this.transmission.clutchFrictionCoeff * this.engine._shaft_inertia / ( this.engine._load_inertia + this.engine._shaft_inertia ) );
+        this._differential_rot = this.transmission.gear !== false ? posterior_transmission_rot * this.transmission.gearbox[this.transmission.gear] : this.speed / this._wheel.R;
+      } else {
+        this.engine.updateEngineState( throttle, timestep, true );
+        this._differential_rot = this.transmission.gear !== false ? this.engine._rot * this.transmission.gearbox[this.transmission.gear] : this.speed / this._wheel.R;
+      }
+      // Aply brake decceleration
+      this._differential_rot -= Phys.activationFunction( brake, 0.5, 15 ) * timestep * this._differential_rot / 5;
       let tempSpeed = this.speed;
       this.speed = this._differential_rot * this._wheel.R;
       this.acceleration = ( this.speed - tempSpeed ) / ( timestep / 1000 );
@@ -119,26 +110,32 @@ class Car{
       if ( isFinite( this.ackermanSteering.ackermanPoint )) {
         let theta = timestep * this.speed / ( 2 * Math.PI * this.ackermanSteering.ackermanPoint );
         transformation.makeRotationAxis( this.upVector, theta );
+        this.centerTransformation.multiply( transformation );
         let XO = (this.upVector.clone()).cross( this.frontVector.clone() ).multiplyScalar( this.ackermanSteering.ackermanPoint ).add( this.frontVector.clone().multiplyScalar(this.min) );
         let OX_dot = ((XO.clone()).negate()).applyAxisAngle( this.upVector, theta );
         let shift = XO.add( OX_dot )/*.add( (this.frontVector.clone()).multiplyScalar(this.min) )*/;
-        transformation.setPosition( shift.clone() );
-        this.centerTransformation.multiply( transformation );
+        // console.log(shift.length());
+        transformation.setPosition( shift );
+        this.centerTransformation.setPosition( shift.add(this.center) );
+        // this.centerTransformation.multiply( transformation );
         for ( var i = 0; i < this.wheelGroup.children.length; i++ )
           this.wheelGroup.children[i].matrix.copy( (this.centerTransformation.clone()).multiply(this.wheelMatrices[i][1]) );
         let quaternion = new THREE.Quaternion();
         this.centerTransformation.decompose ( [], quaternion, [] );
         this.frontVector.copy((new THREE.Vector3( 1, 0, 0 )).applyQuaternion(quaternion));
       } else {
-        transformation.setPosition( this.frontVector.clone().multiplyScalar( this.speed * timestep ) );
-        this.centerTransformation.multiply( transformation );
+        this.centerTransformation.setPosition( (this.frontVector.clone()).multiplyScalar( this.speed * timestep ).add(this.center) )
+        transformation.setPosition( (this.frontVector.clone()).multiplyScalar( this.speed * timestep ) );
+        // console.log((this.frontVector.clone()).multiplyScalar( this.speed * timestep ).length());
+        // this.centerTransformation.multiply( transformation );
         for ( var i = 0; i < this.wheelGroup.children.length; i++ )
           this.wheelGroup.children[i].matrix.copy( (this.centerTransformation.clone()).multiply(this.wheelMatrices[i][1]) );
       }
 
+      // console.log(this.frontVector);
       this.carMesh.matrix.copy(this.centerTransformation);
-      console.log(this.frontVector.length());
-      this.center.set( this.centerTransformation.elements[12], this.centerTransformation.elements[13], this.centerTransformation.elements[14] );
+      // console.log(this.frontVector.length());
+       this.center.set( this.centerTransformation.elements[12], this.centerTransformation.elements[13], this.centerTransformation.elements[14] );
       this.camera.position.add( new THREE.Vector3( transformation.elements[12], transformation.elements[13], transformation.elements[14] ) );
     }
 
