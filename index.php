@@ -14,6 +14,7 @@
 	<script src="js/three/csg.js"></script>
 	<script src="js/three/ThreeCSG.js"></script>
 	<script src="js/Utils.js"></script>
+	<script src="js/ammo.js"></script>
 
 	<!-- <script src="js/processing.min.js"></script> -->
 	<script src="js/three/three.min.js"></script>
@@ -51,7 +52,6 @@
 		clutch = false;
 
 	var cameraOffset = new THREE.Vector3();
-	var raycaster = new THREE.Raycaster();
 	var components = [];
 	var sceneGeometry = new THREE.Geometry();
 	var totalLength = 0; // Total length is normalized and is used to preview the full !scaled! scene
@@ -91,7 +91,7 @@
 			scene = new THREE.Scene();
 			group = new THREE.Group();
 			var wheel = new Wheel( 0.5, 0.43, 0.15, 'Flat', { DO: 0.5, DI:0.43, t: 0.15 }, 'Ribs', { DO: 0.43, DI: 0.4, t: 0.15, intrWidth:  0.022, numRibs: 12, tRib: 0.015,
-				 dRib: 0.030, ribsPosition: 0.12, axleIntrWidth: -0.01, axleDI: 0.01 , axleDO: 0.08, tAxle: 10.02 }, 0.04, {}, meshMaterial);
+				 dRib: 0.030, ribsPosition: 0.12, axleIntrWidth: -0.01, axleDI: 0.01 , axleDO: 0.08, tAxle: 0.02 }, 0.04, {}, meshMaterial);
 			acceleration = 0;
 			var engine = new Engine( 50, 7000 / 60, 1050 / 60, 390, transmission.clutch );//I = M / 2 * R ^ 2 [kg*m^2]
 			var car_geo = Car.makeCarGeo( /*2D front to rear points*/[ [1.7, 0], [1.68, 0.05], [1.67, 0.19], [1.7, 0.25], [1.69, 0.32], [1.67, 0.34], [0.55, 0.47], [0.1, 0.65], [-0.7, 0.67],
@@ -140,6 +140,8 @@
 			camera.position.copy( (car.center.clone()).add(cameraOffset.applyAxisAngle(new THREE.Vector3( 0, 1, 0 ), Math.atan(car.frontVector.z / car.frontVector.x))));
 			// camera.matrixAutoUpdate = false;
 			car.camera = camera;
+			car.camera.cameraOffset = cameraOffset;
+			car.camera.theta = spawnPosition.rotation * 2 * Math.PI;
 			scene.add( camera );
 
 			var listener = new THREE.AudioListener();
@@ -258,6 +260,7 @@
 							childs.push( group.children[i].children[j].children[k] );
 
 			 scene.autoUpdate = false;
+			 timer2 = performance.now();
 		}
 
 		document.addEventListener( 'keydown', press )
@@ -365,16 +368,20 @@
 			// acceleration = (up ? 1 : 0) - (down ? 1 : 0) - (!(up || down) ? 0.5 * Math.sign(car.speed.x) : 0);
 
 			timestep = timer2 - timer1;
+			// timestep = clock.getDelta();
 			// console.log( car.engine._idle_rot);
 			timer1 = performance.now();
+			console.log(timer1);
 			frameBuffer.push( 1000 / timestep );
 			overlay.innerHTML = 'Framerate : ' + String( ( frameBuffer.reduce((a, b) => a + b, 0) / 10 ).toFixed() ) +  ' FPS';
 			// console.log( frameBuffer.length );
 			frameBuffer.shift();
 			throttle += ( up ? ( throttle < 2 ? 0.05 * timestep : 0 ) : ( throttle > 1 ? - 0.1 * timestep * (throttle - 1) : 0 ) );
 			brake += ( down ? ( brake < 1 ? 0.2 * timestep : 0 ) : ( brake > 0 ? - 0.4 * timestep * brake : 0 ) );
-			steerSpeed = (left ? 0.6 * timestep : 0) - (right ? 0.6 * timestep : 0) - (!(left || right) ?  timestep * car.ackermanSteering.steeringWheelPosition : 0);
+			steerSpeed = Math.min( 0.05 * car.maxSpeed / Math.abs(car.speed), 1) * ( (left ? 0.6 * timestep : 0) - (right ? 0.6 * timestep : 0) ) - (!(left || right) ?  timestep * car.ackermanSteering.steeringWheelPosition : 0);
+			console.log(steerSpeed, car.maxSpeed);
 			car.transmission.clutch += !clutch ? (car.transmission.clutch < 1 ? 0.05 * timestep : 0 ) : (car.transmission.clutch > 0 ? - 0.05 * timestep * car.transmission.clutch : 0 );
+			if (car.transmission.clutch < 0) car.transmission.clutch = 0;
 			HUD.innerHTML = 'Engine RPM : ' + String( (car.engine._rot * 60).toFixed() ) +
 				' , Speed : ' + String( ( car.speed * 3.6 ).toFixed(1) ) +
 				' , Throttle : ' + String( throttle.toFixed(1) ) +
