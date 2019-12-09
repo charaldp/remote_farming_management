@@ -1,20 +1,21 @@
 class Car{
     constructor( wheel, wheelsPositions, engine, mass, transmission, carGeo, spawnPosition /*[Coordinate Vector, Spawn Rotation (Degrees)]*/, camera, steeringCenter ) {
       this.wheelGroup = new THREE.Group();
+      spawnPosition.position = new THREE.Vector3( spawnPosition.position[0], spawnPosition.position[1], spawnPosition.position[2] );
       if ( wheel instanceof Wheel ) {
         this.min = 0;
         this.max = 0;
         for ( var i = 0; i < wheelsPositions.length; i++ ) {
           //wheel.group.position.x = wheelsPositions[i].x;
           //wheel.group.position.z = wheelsPositions[i].y;
-          if( wheelsPositions[i].x > 0) this.frontWheelsAxlesWidth = 2 * wheelsPositions[i].y;
+          if( wheelsPositions[i][0] > 0) this.frontWheelsAxlesWidth = 2 * wheelsPositions[i][1];
           this.wheelGroup.add(wheel.group.clone())
           //wheel.group.rotation.y = Math.PI;
           //wheel.group.position.z *= -1;
           this.wheelGroup.add(wheel.group.clone())
           //wheel.group.rotation.y = 0;
-          if (wheelsPositions[i].x > this.max) this.max = wheelsPositions[i].x;
-          if (wheelsPositions[i].x < this.min) this.min = wheelsPositions[i].x;
+          if (wheelsPositions[i][0] > this.max) this.max = wheelsPositions[i][0];
+          if (wheelsPositions[i][0] < this.min) this.min = wheelsPositions[i][0];
 
         }
       }
@@ -25,10 +26,10 @@ class Car{
       for ( var i = 0; i < this.wheelGroup.children.length; i++ ) {
         this.wheelMatrices.push([new THREE.Matrix4(), new THREE.Matrix4()]);
         this.wheelMatrices[i][0].makeRotationAxis( this.upVector,  Math.PI * ( i % 2 == 0 ? 1 : 0 ) );
-        this.wheelMatrices[i][0].setPosition( new THREE.Vector3(wheelsPositions[ Math.floor(i / 2)].x, wheel.R, wheelsPositions[ Math.floor(i / 2)].y * ( i % 2 == 0 ? -1 : 1 ) ));
+        this.wheelMatrices[i][0].setPosition( new THREE.Vector3(wheelsPositions[ Math.floor(i / 2)][0], wheel.R, wheelsPositions[ Math.floor(i / 2)][1] * ( i % 2 == 0 ? -1 : 1 ) ));
         this.wheelMatrices[i][1].copy(this.wheelMatrices[i][0]);
         // this.wheelQuaternions[i];
-        console.log(this.wheelMatrices[i], wheelsPositions[ Math.floor(i / 2)].y);
+        console.log(this.wheelMatrices[i], wheelsPositions[ Math.floor(i / 2)][1]);
       }
       this.engine = engine;
       this.transmission = transmission;
@@ -79,7 +80,7 @@ class Car{
 
     updateLoad( ) {
       this.engine._load_inertia = Phys.activationFunction( this.transmission.clutch, 0.5, 15 ) * this._mass * this._wheel.R * (this.transmission.gear === false ? 0 : Math.pow(Math.abs(this.transmission.gearbox[this.transmission.gear]), 2 ) );
-      console.log( this.engine._load_inertia );
+      console.log( this.transmission.clutch,this._mass, this._wheel, this.transmission.gear );
     }
 
     updateClutchConnection( throttle, brake, timestep ) {
@@ -115,12 +116,9 @@ class Car{
         this.centerTransformation.multiply( transformation );
         let XO = (this.upVector.clone()).cross( this.frontVector.clone() ).multiplyScalar( this.ackermanSteering.ackermanPoint ).add( this.frontVector.clone().multiplyScalar(this.min) );
         let OX_dot = ((XO.clone()).negate()).applyAxisAngle( this.upVector, theta );
-        let shift = XO.add( OX_dot )/*.add( (this.frontVector.clone()).multiplyScalar(this.min) )*/;
-        // console.log(shift.length());
+        let shift = XO.add( OX_dot );
         transformation.setPosition( shift );
-        // this.centerTransformation.setPosition( shift.add(this.center) );
         this.centerTransformation.setPosition( shift.add(new THREE.Vector3(this.centerTransformation.elements[12], this.centerTransformation.elements[13], this.centerTransformation.elements[14])) );
-        // this.centerTransformation.multiply( transformation );
         for ( var i = 0; i < this.wheelGroup.children.length; i++ )
           this.wheelGroup.children[i].matrix.copy( (this.centerTransformation.clone()).multiply(this.wheelMatrices[i][1]) );
         let quaternion = new THREE.Quaternion();
@@ -129,24 +127,19 @@ class Car{
       } else {
         this.centerTransformation.setPosition( (this.frontVector.clone()).multiplyScalar( this.speed * timestep ).add(this.center) )
         transformation.setPosition( (this.frontVector.clone()).multiplyScalar( this.speed * timestep ) );
-        // console.log((this.frontVector.clone()).multiplyScalar( this.speed * timestep ).length());
-        // this.centerTransformation.multiply( transformation );
         for ( var i = 0; i < this.wheelGroup.children.length; i++ )
           this.wheelGroup.children[i].matrix.copy( (this.centerTransformation.clone()).multiply(this.wheelMatrices[i][1]) );
       }
-
-      // console.log(this.frontVector);
       this.carMesh.matrix.copy(this.centerTransformation);
-      // console.log(this.frontVector.length());
       this.center.add( new THREE.Vector3 (transformation.elements[12], transformation.elements[13], transformation.elements[14] ) )
       // set( this.centerTransformation.elements[12], this.centerTransformation.elements[13], this.centerTransformation.elements[14] );
       this.camera.position.add( new THREE.Vector3( transformation.elements[12], transformation.elements[13], transformation.elements[14] ) );
       this.camera.cameraOffset.copy( (this.camera.position.clone()).sub(this.center) );
       let projectedCamVec = this.camera.cameraOffset.clone().projectOnPlane(this.upVector.clone()).negate();
       this.camera.theta = Math.atan2( projectedCamVec.z, projectedCamVec.x );
-      // let vehicleTrackCamera = (this.camera.cameraOffset.clone()).applyQuaternion( quaternion );
-      let deltaTheta = Math.atan2( this.frontVector.z, this.frontVector.x ) - this.camera.theta
-      deltaTheta -= this.speed < 0 ? Math.sign(deltaTheta) * Math.PI : 0;
+      let deltaTheta = Math.atan2( this.frontVector.z, this.frontVector.x ) - this.camera.theta;
+      if (Math.abs(deltaTheta) > Math.PI) deltaTheta -= Math.sign(deltaTheta) * 2 * Math.PI;
+      deltaTheta -= this.speed < 0 ? Math.sign( deltaTheta ) * Math.PI : 0;
       // if ( this.frontVector.cross( this.upVector ) ) deltaTheta *= -1;
       // console.log( this.camera.theta, deltaTheta );
       let previous = this.camera.cameraOffset.clone();
@@ -160,7 +153,7 @@ class Car{
       for ( var i = 1; i < frontToRearPoints.length; i++ )
         extrudeShape.lineTo( frontToRearPoints[i][0], frontToRearPoints[i][1] );
       for ( var i = 0; i < wheelsCentersPositions.length; i++ )
-        extrudeShape.absarc( wheelsCentersPositions[i], 0, radius + bevelThickness, Math.PI, 0, true );
+        extrudeShape.absarc( wheelsCentersPositions[i][0], 0, radius + bevelThickness, Math.PI, 0, true );
 			var extrudeSettings = {
 				steps: 1,
 				depth: width - 2 * bevelThickness,

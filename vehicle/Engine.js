@@ -1,5 +1,5 @@
 class Engine {
-  constructor ( shaft_inertia, rev_limit, idle_rot, maximum_hp, clutch ) {
+  constructor ( shaft_inertia, rev_limit, idle_rot, maximum_hp ) {
     this._isOn = false;
     this._rot = 0;
     this._idle_rot = idle_rot;
@@ -9,7 +9,6 @@ class Engine {
     this._currentTorque = 0;
     this._maximumHP = maximum_hp;
     this._load_inertia = 0;
-    this._clutch = clutch;
   }
 
   updateEngineState( throttle, timestep, handleLoadState ) {
