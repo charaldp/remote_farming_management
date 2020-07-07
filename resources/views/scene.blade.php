@@ -11,29 +11,29 @@
 	</head>
 	<body>
 
-	<script src="resources/js/prev/three/csg.js"></script>
-	<script src="resources/js/prev/three/ThreeCSG.js"></script>
-	<script src="resources/js/prev/Utils.js"></script>
-	<script src="resources/js/prev/ammo.js"></script>
+	<script src="js/three/csg.js"></script>
+	<script src="js/three/ThreeCSG.js"></script>
+	<script src="js/Utils.js"></script>
+	<script src="js/ammo.js"></script>
 
-	<script src="resources/js/prev/jquery-1.9.1.js"></script>
-	<script src="resources/js/prev/jquery-migrate-1.2.1.min.js"></script>
-	<!-- <script src="resources/js/prev/processing.min.js"></script> -->
-	<script src="resources/js/prev/three/three.min.js"></script>
-	<script src="resources/js/prev/three/objects/Sky.js"></script>
-	<script src="resources/js/prev/three/dat.gui.min.js"></script>
-	<script src="resources/js/prev/three/controls/OrbitControls.js"></script>
-	<script src="resources/js/prev/three/controls/FlyControls.js"></script>
-	<script src="resources/js/prev/three/controls/DeviceOrientationControls.js"></script>
-	<script src="resources/js/prev/three/controls/MapControls.js"></script>
-	<script src="resources/js/prev/three/controls/FirstPersonControls.js"></script>
-	<script src="resources/js/prev/three/controls/TransformControls.js"></script>
-	<script src="resources/js/Components/Wheel.js"></script>
-	<script src="resources/js/Components/Car.js"></script>
-	<script src="resources/js/Components/Engine.js"></script>
-	<script src="resources/js/Components/Phys.js"></script>
-	<script src="resources/js/Models/Tire.js"></script>
-	<script src="resources/js/Models/Rim.js"></script>
+	<script src="js/jquery-1.9.1.js"></script>
+	<script src="js/jquery-migrate-1.2.1.min.js"></script>
+	<!-- <script src="js/processing.min.js"></script> -->
+	<script src="js/three/three.min.js"></script>
+	<script src="js/three/objects/Sky.js"></script>
+	<script src="js/three/dat.gui.min.js"></script>
+	<script src="js/three/controls/OrbitControls.js"></script>
+	<script src="js/three/controls/FlyControls.js"></script>
+	<script src="js/three/controls/DeviceOrientationControls.js"></script>
+	<script src="js/three/controls/MapControls.js"></script>
+	<script src="js/three/controls/FirstPersonControls.js"></script>
+	<script src="js/three/controls/TransformControls.js"></script>
+	<script src="vehicle/Wheel.js"></script>
+	<script src="vehicle/Car.js"></script>
+	<script src="vehicle/Engine.js"></script>
+	<script src="vehicle/Phys.js"></script>
+	<script src="Models/Tire.js"></script>
+	<script src="Models/Rim.js"></script>
 	<?php
 			$file = @$_GET[json];
 			// a json file is provided as an argument at the php file as: ?json=<JSONFilename> (no filetype required)
@@ -41,7 +41,7 @@
 		?>
 		<script>
 		// var file = './json/CylindricalShell.json';
-		var file = "public/data/" + "<?php echo $file; ?>" + ".json";
+		var file = "./data/" + "<?php echo $file; ?>" + ".json";
 		console.log(file);
 		$.ajax({
 			cache: 		false,
