@@ -14,9 +14,9 @@ class Wheel extends Migration
     public function up()
     {
         Schema::create('wheels', function (Blueprint $table) {
-            $table->id();
-            $table->bigIncrements('tire_id');
-            $table->bigIncrements('rim_id');
+            $table->bigIncrements('id');
+            $table->unsignedBigInteger('tire_id');
+            $table->unsignedBigInteger('rim_id');
             $table->string('name');
         });
     }
@@ -28,6 +28,6 @@ class Wheel extends Migration
      */
     public function down()
     {
-        //
+        Schema::dropIfExists('wheels');
     }
 }

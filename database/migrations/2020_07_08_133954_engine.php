@@ -14,7 +14,7 @@ class Engine extends Migration
     public function up()
     {
         Schema::create('engines', function (Blueprint $table) {
-            $table->id();
+            $table->bigIncrements('id');
             $table->string('name');
             $table->unsignedDecimal('shaft_inertia')->default(50);
             $table->unsignedDecimal('rev_limit')->default(116.66); // rps
@@ -30,6 +30,6 @@ class Engine extends Migration
      */
     public function down()
     {
-        //
+        Schema::dropIfExists('engines');
     }
 }

@@ -14,11 +14,11 @@ class Tire extends Migration
     public function up()
     {
         Schema::create('tires', function (Blueprint $table) {
-            $table->id();
+            $table->bigIncrements('id');
+            $table->unsignedBigInteger('material_id');
             $table->string('name');
             $table->string('tire_type')->default('flat');
-            $table->json('type_dimensions')->default(["DO" => 0.5,"DI" => 0.43,"t" => 0.15]);
-            $table->unsignedBigInteger('material_id');
+            $table->json('type_dimensions');
         });
     }
 
@@ -29,6 +29,6 @@ class Tire extends Migration
      */
     public function down()
     {
-        //
+        Schema::dropIfExists('tires');
     }
 }
