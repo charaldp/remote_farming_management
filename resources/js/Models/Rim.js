@@ -1,4 +1,5 @@
-class Rim {
+  import 'three';
+  class Rim {
   constructor( rimType, rimDims, meshMaterial ) {
     // new Tire( 'Ribs', { DO: 400, DI: 360, t: 200, intrWidth:  22, numRibs: 8, tRib: 10, dRib: 25, ribsPosition: 100, axleIntrWidth: 20, axleDI: 50 , axleDO: 100, tAxle: 50 },  )
 
@@ -27,3 +28,4 @@ class Rim {
 
   }
 }
+export {Rim}

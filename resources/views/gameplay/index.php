@@ -62,7 +62,7 @@
     right = false,
     down = false,
     left = false,
-		clutch = false;
+	clutch = false;
 
 	var cameraOffset = new THREE.Vector3();
 	var components = [];
@@ -157,7 +157,7 @@
 			sound = new THREE.Audio( listener );
 
 			var audioLoader = new THREE.AudioLoader();
-			audioLoader.load( 'sounds/engine.ogg', function( buffer ) {
+			audioLoader.load( 'public/sounds/engine.ogg', function( buffer ) {
 				sound.setBuffer( buffer );
 				sound.setLoop( true );
 				sound.setVolume( 0.5 );

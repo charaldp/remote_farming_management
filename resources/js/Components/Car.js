@@ -1,3 +1,4 @@
+import 'three';
 class Car{
     constructor( wheel, wheelsPositions, engine, mass, transmission, carGeo, spawnPosition /*[Coordinate Vector, Spawn Rotation (Degrees)]*/, camera, steeringCenter ) {
       this.wheelGroup = new THREE.Group();
@@ -167,3 +168,4 @@ class Car{
       return (car_geo.translate( 0, radius, - width / 2 + bevelThickness));
     }
 }
+export default {Car}

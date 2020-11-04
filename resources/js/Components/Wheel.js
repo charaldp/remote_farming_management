@@ -1,3 +1,4 @@
+import 'three';
 class Wheel {
   constructor ( DO, DI, t, tireType, tireDims, rimType, rimDims, pressure, frictionOptions, meshMaterial ) {
     this.tire = new Tire( tireType, tireDims, meshMaterial );
@@ -9,3 +10,4 @@ class Wheel {
     this.group.position.set( 0, DO / 2, 0 );
   }
 }
+export default {Wheel}

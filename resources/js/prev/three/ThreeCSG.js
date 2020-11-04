@@ -1,3 +1,4 @@
+import 'three';
 'use strict';
 window.ThreeBSP = (function() {
 	

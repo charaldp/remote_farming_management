@@ -1,3 +1,4 @@
+import 'three';
 class Tire {
   constructor( tireType, tireDims, meshMaterial ) {
 
@@ -16,3 +17,4 @@ class Tire {
   }
 
 }
+export {Tire}
