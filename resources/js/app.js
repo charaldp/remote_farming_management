@@ -7,6 +7,7 @@
 require('./bootstrap');
 
 window.Vue = require('vue');
+<<<<<<< HEAD
 import Vuex from 'vuex';
 import { mapState } from 'vuex';
 import storeData from "./store/index.js"    
@@ -37,3 +38,6 @@ const store = new Vuex.Store(
 const app = new Vue({
     el: '#app',
 });
+=======
+// Vue.component('cylindrical-shell-component-checks', require('./components/cylindrical_shell/cylindricalShellComponentChecks.vue').default);
+>>>>>>> c5c906a9cbbfe9f743b9c533e94f7f37572770f8
