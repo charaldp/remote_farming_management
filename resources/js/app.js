@@ -7,11 +7,11 @@
 require('./bootstrap');
 
 window.Vue = require('vue');
-<<<<<<< HEAD
 import Vuex from 'vuex';
 import { mapState } from 'vuex';
 import storeData from "./store/index.js"    
-
+// import VueThreejs from 'vue-threejs'
+// Vue.use(VueThreejs)
 /**
  * The following block of code may be used to automatically register your
  * Vue components. It will recursively scan this directory for the Vue
@@ -25,10 +25,12 @@ import storeData from "./store/index.js"
 
 Vue.component('example-component', require('./components/ExampleComponent.vue').default);
 Vue.component('scene-component', require('./components/scene.vue').default);
+Vue.component('scene-simple', require('./components/sceneSimple.vue').default);
 
 const store = new Vuex.Store(
     storeData
  )
+
 /**
  * Next, we will create a fresh Vue application instance and attach it to
  * the page. Then, you may begin adding components to this application
@@ -38,6 +40,3 @@ const store = new Vuex.Store(
 const app = new Vue({
     el: '#app',
 });
-=======
-// Vue.component('cylindrical-shell-component-checks', require('./components/cylindrical_shell/cylindricalShellComponentChecks.vue').default);
->>>>>>> c5c906a9cbbfe9f743b9c533e94f7f37572770f8

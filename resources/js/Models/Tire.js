@@ -1,4 +1,5 @@
-import 'three';
+import * as THREE from 'three';
+// import 'three';
 class Tire {
   constructor( tireType, tireDims, meshMaterial ) {
 
@@ -17,4 +18,4 @@ class Tire {
   }
 
 }
-export {Tire}
+export default {Tire};

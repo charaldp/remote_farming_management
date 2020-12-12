@@ -1,8 +1,14 @@
-import 'three';
+import * as THREE from 'three';
+// import 'three';
+import Tire from '../Models/Tire.js';
+import Rim from '../Models/Rim.js';
+// import Tire from '../Models/Tire.js';
+// import Rim from '../Models/Rim.js';
 class Wheel {
   constructor ( DO, DI, t, tireType, tireDims, rimType, rimDims, pressure, frictionOptions, meshMaterial ) {
-    this.tire = new Tire( tireType, tireDims, meshMaterial );
-    this.rim = new Rim( rimType, rimDims, meshMaterial );
+    // console.log(Tire);
+    this.tire = new Tire.Tire( tireType, tireDims, meshMaterial );
+    this.rim = new Rim.Rim( rimType, rimDims, meshMaterial );
     this.R = DO / 2;
     this.group = new THREE.Group();
     this.group.add(this.rim.meshOut);
@@ -10,4 +16,4 @@ class Wheel {
     this.group.position.set( 0, DO / 2, 0 );
   }
 }
-export default {Wheel}
+export default {Wheel};

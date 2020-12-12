@@ -14,7 +14,7 @@
                         </div>
                     @endif
 
-                    <scene-component :json="{{App\Car::$vehicle_example}}"></scene-component>
+                    <scene-simple :json="{{App\Car::$vehicle_example}}"></scene-simple>
                 </div>
             </div>
         </div>

@@ -17,4 +17,4 @@ class Phys {
     return Math.exp( - Math.pow( Math.abs(x - center), 2 ) / 2 / sigma_sq ) / Math.sqrt( 2 * Math.PI * sigma_sq );
   }
 }
-export {Phys}
+export default {Phys};

@@ -1,9 +1,12 @@
-import 'three';
+import * as THREE from 'three';
+// import 'three';
+import Wheel from './Wheel.js';
+import Phys from './Phys.js';
 class Car{
     constructor( wheel, wheelsPositions, engine, mass, transmission, carGeo, spawnPosition /*[Coordinate Vector, Spawn Rotation (Degrees)]*/, camera, steeringCenter ) {
       this.wheelGroup = new THREE.Group();
       spawnPosition.position = new THREE.Vector3( spawnPosition.position[0], spawnPosition.position[1], spawnPosition.position[2] );
-      if ( wheel instanceof Wheel ) {
+      if ( wheel instanceof Wheel.Wheel ) {
         this.min = 0;
         this.max = 0;
         for ( var i = 0; i < wheelsPositions.length; i++ ) {
@@ -80,7 +83,7 @@ class Car{
     }
 
     updateLoad( ) {
-      this.engine._load_inertia = Phys.activationFunction( this.transmission.clutch, 0.5, 15 ) * this._mass * this._wheel.R * (this.transmission.gear === false ? 0 : Math.pow(Math.abs(this.transmission.gearbox[this.transmission.gear]), 2 ) );
+      this.engine._load_inertia = Phys.Phys.activationFunction( this.transmission.clutch, 0.5, 15 ) * this._mass * this._wheel.R * (this.transmission.gear === false ? 0 : Math.pow(Math.abs(this.transmission.gearbox[this.transmission.gear]), 2 ) );
       console.log( this.transmission.clutch,this._mass, this._wheel, this.transmission.gear );
     }
 
@@ -90,8 +93,8 @@ class Car{
       let targetRot = (this.engine._rot * this.engine._shaft_inertia + transmission_rot * this.engine._load_inertia) / (this.engine._shaft_inertia + this.engine._load_inertia);
 
       let synchronizationCoeff = transmission_rot / this.engine._rot;
-      this.transmission.clutchFrictionCoeff = Phys.clutchSigmoidFrictionCoeff(this.transmission.clutch, 15, synchronizationCoeff );
-      if ( Math.abs(synchronizationCoeff - 1) > 0.01 || this.transmission.clutchFrictionCoeff < Phys.clutchSigmoidFrictionCoeff( 1, 15, 1 ) / 1.5 ) {
+      this.transmission.clutchFrictionCoeff = Phys.Phys.clutchSigmoidFrictionCoeff(this.transmission.clutch, 15, synchronizationCoeff );
+      if ( Math.abs(synchronizationCoeff - 1) > 0.01 || this.transmission.clutchFrictionCoeff < Phys.Phys.clutchSigmoidFrictionCoeff( 1, 15, 1 ) / 1.5 ) {
         this.engine.updateEngineState( throttle, timestep, false );
         // console.log(this.transmission.clutchFrictionCoeff);
         this.engine._rot += (targetRot - this.engine._rot) * (0.98, timestep * this.transmission.clutchFrictionCoeff * this.engine._load_inertia / ( this.engine._load_inertia + this.engine._shaft_inertia ) );
@@ -103,7 +106,7 @@ class Car{
         this._differential_rot = this.transmission.gear !== false ? this.engine._rot * this.transmission.gearbox[this.transmission.gear] : this.speed / this._wheel.R;
       }
       // Aply brake decceleration
-      this._differential_rot -= Phys.activationFunction( brake, 0.5, 15 ) * timestep * this._differential_rot / 5;
+      this._differential_rot -= Phys.Phys.activationFunction( brake, 0.5, 15 ) * timestep * this._differential_rot / 5;
       let tempSpeed = this.speed;
       this.speed = this._differential_rot * this._wheel.R;
       this.acceleration = ( this.speed - tempSpeed ) / ( timestep / 1000 );
@@ -168,4 +171,4 @@ class Car{
       return (car_geo.translate( 0, radius, - width / 2 + bevelThickness));
     }
 }
-export default {Car}
+export default {Car};

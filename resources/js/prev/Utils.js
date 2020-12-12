@@ -1,3 +1,5 @@
+import * as THREE from 'three';
+// import 'three';
 class Utils {
 
   constructor ( dimDiv ) {
@@ -96,3 +98,5 @@ class Utils {
     return geo;
   }
 }
+
+export default {Utils};
