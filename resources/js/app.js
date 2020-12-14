@@ -27,6 +27,10 @@ Vue.component('example-component', require('./components/ExampleComponent.vue').
 Vue.component('scene-component', require('./components/scene.vue').default);
 Vue.component('scene-simple', require('./components/sceneSimple.vue').default);
 
+import * as Three from 'three';
+// const THREE = require('THREE')
+Vue.use(Three);
+
 const store = new Vuex.Store(
     storeData
  )

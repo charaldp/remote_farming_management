@@ -1,10 +1,9 @@
 <template>
-	<div>
-    	<div id="container" ref="scene_container"></div>
-	</div>
+	<div id="container"></div>
 </template>
 <script>
-    import * as Three from 'three';
+	import * as Three from 'three';
+	// const THREE = Three;
     // import Sky from 'three';
     import '../prev/three/csg.js';
     import '../prev/three/ThreeCSG.js';
@@ -13,20 +12,22 @@
     import '../prev/jquery-1.9.1.js';
     import '../prev/jquery-migrate-1.2.1.min.js';
     import '../prev/three/three.min.js';
-    import '../prev/three/dat.gui.min.js';
+	import '../prev/three/dat.gui.min.js';
+	// import 'three/examples/js/controls/OrbitControls';
     // import '../prev/three/controls/OrbitControls.js';
     // import '../prev/three/controls/FlyControls.js';
     // import '../prev/three/controls/DeviceOrientationControls.js';
     // import '../prev/three/controls/MapControls.js';
     // import '../prev/three/controls/FirstPersonControls.js';
-    // import '../prev/three/controls/TransformControls.js';
+	// import '../prev/three/controls/TransformControls.js';
+	import { Sky } from 'three/examples/jsm/objects/Sky.js';
     import Wheel from './Wheel.js';
     import Car from './Car.js';
     import Engine from './Engine.js';
     import Phys from './Phys.js';
     import Tire from '../Models/Tire.js';
     import Rim from '../Models/Rim.js';
-import { log } from 'three';
+	import { log } from 'three';
     export default {
         nane: 'scene-component',
         props: [
@@ -63,16 +64,17 @@ import { log } from 'three';
                 dimDiv: 1, // This variable divides all dimension data in order to provide a better visualization
                 utils: {},
                 meshMaterial: {
-                    tire: new Three.MeshPhongMaterial( { shininess: 50, color : 0x1b1b1b } ),
-                    rim: new Three.MeshPhysicalMaterial( { color: 0xd7d7d7, roughness: 0.17, metalness: 0.47, reflectivity: 1, clearCoat: 0.64, clearCoatRoughness: 0.22 } ),
-                    building: new Three.MeshLambertMaterial( { color: 0xcccccc, opacity: 0.95, transparent: true } ),
-                    ground: new Three.MeshBasicMaterial( { color: 0x77aa22, side: Three.FrontSide, opacity: 0.65, transparent: true } )
+                    // tire: new Three.MeshPhongMaterial( { shininess: 50, color : 0x1b1b1b } ),
+                    // rim: new Three.MeshPhysicalMaterial( { color: 0xd7d7d7, roughness: 0.17, metalness: 0.47, reflectivity: 1, clearCoat: 0.64, clearCoatRoughness: 0.22 } ),
+                    // building: new Three.MeshLambertMaterial( { color: 0xcccccc, opacity: 0.95, transparent: true } ),
+                    // ground: new Three.MeshBasicMaterial( { color: 0x77aa22, side: Three.FrontSide, opacity: 0.65, transparent: true } )
                 },
             }
         },
         created() {
 		},
         mounted() {
+			console.log(Three);
 			this.utils = new Utils.Utils( this.dimDiv );
             console.log(this.json);
             this.scene = new Three.Scene();
@@ -83,7 +85,12 @@ import { log } from 'three';
 				// var wheelMaterials = {rim : new Three.MeshPhongMaterial(vehicle.components.wheel[0].meshMaterial.rim), tire : new Three.MeshPhysicalMaterial(vehicle.components.wheel[0].meshMaterial.tire) };
 				// wheelMaterials.rim.color = parseInt(vehicle.components.wheel[0].meshMaterial.rim.colour);
 				// wheelMaterials.tire.color = parseInt(vehicle.components.wheel[0].meshMaterial.tire.colour);
-
+				this.meshMaterial = {
+                    tire: new Three.MeshPhongMaterial( { shininess: 50, color : 0x1b1b1b } ),
+                    rim: new Three.MeshPhysicalMaterial( { color: 0xd7d7d7, roughness: 0.17, metalness: 0.47, reflectivity: 1, clearCoat: 0.64, clearCoatRoughness: 0.22 } ),
+                    building: new Three.MeshLambertMaterial( { color: 0xcccccc, opacity: 0.95, transparent: true } ),
+                    ground: new Three.MeshBasicMaterial( { color: 0x77aa22, side: Three.FrontSide, opacity: 0.65, transparent: true } )
+                };
 				var wheel = new Wheel.Wheel( vehicle.components.wheel[0].DI, vehicle.components.wheel[0].DO, vehicle.components.wheel[0].t, vehicle.components.wheel[0].tireType, vehicle.components.wheel[0].tireDims, vehicle.components.wheel[0].rimType, vehicle.components.wheel[0].rimDims,
 					vehicle.components.wheel[0].pressure, vehicle.components.wheel[0].frictionOptions, this.meshMaterial );
 				var transmission = {clutch: 1, clutchFrictionCoeff: vehicle.components.clutch.clutchFrictionCoeff, gear: false, gearbox: vehicle.components.transmission.gearbox };
@@ -101,10 +108,13 @@ import { log } from 'three';
 			let container = document.getElementById('container');
 			// let container = this.$refs.scene_container;
 			// console.log(this.$refs);
-			var renderer = new Three.WebGLRenderer( { antialias: true } );
-			renderer.setPixelRatio( container.devicePixelRatio );
-			renderer.setSize( container.innerWidth, container.innerHeight );
-			document.body.appendChild( renderer.domElement );
+			this.renderer = new Three.WebGLRenderer()
+      		this.renderer.setSize(window.innerWidth, window.innerHeight)
+      		document.body.appendChild(this.renderer.domElement)
+			// var renderer = new Three.WebGLRenderer( { antialias: true } );
+			// renderer.setPixelRatio( container.devicePixelRatio );
+			// renderer.setSize( container.innerWidth, container.innerHeight );
+			// document.body.appendChild( renderer.domElement );
 			// this.HUD = document.createElement('div');
 			// this.overlay = document.createElement('div');
 			// this.HUD.style.position = 'absolute';
@@ -152,34 +162,34 @@ import { log } from 'three';
 			this.sound = new Three.Audio( listener );
 
 			var audioLoader = new Three.AudioLoader();
-			audioLoader.load( 'public/sounds/engine.ogg', function( buffer ) {
+			audioLoader.load( 'sounds/engine.ogg', function( buffer ) {
 				this.sound.setBuffer( buffer );
 				this.sound.setLoop( true );
 				this.sound.setVolume( 0.5 );
 				this.sound.play();
-			});
+			}.bind(this));
 			// controls
-			this.controls = new OrbitControls( this.camera, renderer.domElement );
-			this.controls.minDistance = this.totalLength / 10;
-			this.controls.maxDistance = 100 * this.totalLength;
-			this.controls.target0 = this.car.center;
-			this.controls.target = this.car.center;
-			this.controls.maxPolarAngle = Math.PI * 2;
-			this.controls.screenSpacePanning = true;
-			this.controls.enableKeys = false;
-			this.controls.update();
+			// this.controls = new OrbitControls( this.camera, renderer.domElement );
+			// this.controls.minDistance = this.totalLength / 10;
+			// this.controls.maxDistance = 100 * this.totalLength;
+			// this.controls.target0 = this.car.center;
+			// this.controls.target = this.car.center;
+			// this.controls.maxPolarAngle = Math.PI * 2;
+			// this.controls.screenSpacePanning = true;
+			// this.controls.enableKeys = false;
+			// this.controls.update();
 			// console.log(controls);
 
 			this.scene.add( new Three.AmbientLight( 0x222222 ) );
 
 			var light = new Three.PointLight( 0xffffff, 1 );
-			camera.add( light );
+			this.camera.add( light );
 			// Sky
-			// var sky = new Three.Sky();
-			// sky.scale.setScalar( 450000 );
-			// this.scene.add( sky );
+			var sky = new Sky();
+			sky.scale.setScalar( 450000 );
+			this.scene.add( sky );
 			// Add Sun Helper
-			sunSphere = new Three.Mesh(
+			var sunSphere = new Three.Mesh(
 				new Three.SphereBufferGeometry( 20000, 16, 8 ),
 				new Three.MeshBasicMaterial( { color: 0xffffff } )
 			);
@@ -208,12 +218,12 @@ import { log } from 'three';
 				azimuth: 0.2029, // Facing front,
 				sun: true
 			};
-			// var uniforms = sky.material.uniforms;
-			// uniforms[ "turbidity" ].value = effectController.turbidity;
-			// uniforms[ "rayleigh" ].value = effectController.rayleigh;
-			// uniforms[ "luminance" ].value = effectController.luminance;
-			// uniforms[ "mieCoefficient" ].value = effectController.mieCoefficient;
-			// uniforms[ "mieDirectionalG" ].value = effectController.mieDirectionalG;
+			var uniforms = sky.material.uniforms;
+			uniforms[ "turbidity" ].value = effectController.turbidity;
+			uniforms[ "rayleigh" ].value = effectController.rayleigh;
+			uniforms[ "luminance" ].value = effectController.luminance;
+			uniforms[ "mieCoefficient" ].value = effectController.mieCoefficient;
+			uniforms[ "mieDirectionalG" ].value = effectController.mieDirectionalG;
 
 			var theta = Math.PI * ( effectController.inclination - 0.5 );
 			var phi = 2 * Math.PI * ( effectController.azimuth - 0.5 );
@@ -233,15 +243,15 @@ import { log } from 'three';
 			// group.add(new Three.Mesh(sceneGeometry.clone(), meshMaterial.outside.clone()));
 
 			// Add ground plane
-			var planeGeo = new Three.PlaneGeometry( 1000 * totalLength, 1000 * totalLength );
+			var planeGeo = new Three.PlaneGeometry( 1000 * this.totalLength, 1000 * this.totalLength );
 			var plane = new Three.Mesh( planeGeo, this.meshMaterial.ground );
 			plane.rotation.x = - Math.PI / 2;
-			plane.position.y = - 0.0001 * totalLength;
+			plane.position.y = - 0.0001 * this.totalLength;
 			this.scene.add(plane);
 			var buildingsGeo = new Three.Geometry();
 			for ( i = 0; i < 2000 ; i++ ) {
 				let height = Math.random() * 20 + 10;
-				buildingsGeo.merge(new Three.BoxGeometry(Math.random() * 20 + 10, height,Math.random() * 20 + 10 ).translate( (Math.random() * 1000 - 500) * totalLength, height / 2, (Math.random() * 1000 - 500) * totalLength ));
+				buildingsGeo.merge(new Three.BoxGeometry(Math.random() * 20 + 10, height,Math.random() * 20 + 10 ).translate( (Math.random() * 1000 - 500) * this.totalLength, height / 2, (Math.random() * 1000 - 500) * this.totalLength ));
 			}
 			var buildingsMesh = new Three.Mesh( buildingsGeo, this.meshMaterial.building );
 			this.scene.add(buildingsMesh);
@@ -263,7 +273,7 @@ import { log } from 'three';
             this.scene.autoUpdate = false;
             this.timer2 = performance.now();
 			// this.frameBuffer = [ 0, 0, 0, 0, 0, 0, 0, 0, 0, 0 ];
-            // this.animate();
+            this.animate();
         },
         methods: {
             animate() {
@@ -301,13 +311,13 @@ import { log } from 'three';
 				this.car.updateClutchConnection( this.throttle, this.brake, this.timestep / 5 );
 				console.log(this.sound);
                 this.sound.setPlaybackRate( isNaN(this.car.engine._rot) ? 0 : this.car.engine._rot / this.car.engine._idle_rot * 0.9 );
-                this.car.updateWheelTransformation( this.timestep / 5, steerSpeed );
+                this.car.updateWheelTransformation( this.timestep / 5, this.steerSpeed );
                 // this.car.moveCar( timestep / 1 );
-                this.car.applyTransformation( timestep / 5 );
+                this.car.applyTransformation( this.timestep / 5 );
                 this.scene.updateMatrixWorld();
                 // console.log(this.car.centerTransformation);
-                this.controls.target.copy(this.car.center);
-                this.controls.update();
+                // this.controls.target.copy(this.car.center);
+                // this.controls.update();
                 this.renderer.render( this.scene, this.camera );
                 this.timer2 = performance.now();
             }

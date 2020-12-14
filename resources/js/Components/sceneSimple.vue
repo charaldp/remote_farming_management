@@ -1,53 +1,55 @@
 <template>
-    <div id="container"></div>
+  <div id="container"></div>
 </template>
-
 <script>
-import * as Three from 'three'
+import * as THREE from 'three'
+// import 'three/examples/js/controls/OrbitControls';
 
 export default {
   name: 'ThreeTest',
   data() {
     return {
-      camera: null,
-      scene: null,
+      cube: null,
       renderer: null,
-      mesh: null
+      scene: null,
+      camera: null
     }
   },
   methods: {
     init: function() {
-        let container = document.getElementById('container');
+      this.scene = new THREE.Scene()
+      this.camera = new THREE.PerspectiveCamera(
+        75,
+        window.innerWidth / window.innerHeight,
+        0.1,
+        1000
+      )
 
-        this.camera = new Three.PerspectiveCamera(70, container.clientWidth/container.clientHeight, 0.01, 10);
-        this.camera.position.z = 1;
+      this.renderer = new THREE.WebGLRenderer()
+      this.renderer.setSize(window.innerWidth, window.innerHeight)
+      document.body.appendChild(this.renderer.domElement)
 
-        this.scene = new Three.Scene();
+      const geometry = new THREE.BoxGeometry(1, 1, 1)
+      const material = new THREE.MeshBasicMaterial({ color: 0x00ff00 })
+      this.cube = new THREE.Mesh(geometry, material)
+      this.scene.add(this.cube)
 
-        let geometry = new Three.BoxGeometry(0.2, 0.2, 0.2);
-        let material = new Three.MeshNormalMaterial();
+      this.camera.position.z = 5
 
-        this.mesh = new Three.Mesh(geometry, material);
-        this.scene.add(this.mesh);
-
-        this.renderer = new Three.WebGLRenderer({antialias: true});
-        this.renderer.setSize(container.clientWidth, container.clientHeight);
-        container.appendChild(this.renderer.domElement);
-
+      const animate = function() {}
     },
     animate: function() {
-        requestAnimationFrame(this.animate);
-        this.mesh.rotation.x += 0.01;
-        this.mesh.rotation.y += 0.02;
-        this.renderer.render(this.scene, this.camera);
+      requestAnimationFrame(this.animate)
+
+      this.cube.rotation.x += 0.01
+      this.cube.rotation.y += 0.01
+
+      this.renderer.render(this.scene, this.camera)
     }
   },
   mounted() {
-      this.init();
-      this.animate();
+    this.init()
+    this.animate()
   }
 }
 </script>
-
-<style scoped>
-</style>
