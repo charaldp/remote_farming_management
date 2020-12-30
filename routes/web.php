@@ -24,3 +24,6 @@ Route::get('/scene', function () {
     return view('scene');
 });
 Route::get('/home', 'HomeController@index')->name('home');
+Route::get('/scenevue', function () {
+    return view('scene_vue');
+});
