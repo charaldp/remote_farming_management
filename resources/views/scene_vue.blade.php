@@ -1,7 +1,8 @@
 @extends('layouts.app')
 
 @section('content')
-<div class="container">
+<scene-simple :json="{{App\Car::$vehicle_example}}"></scene-simple>
+{{-- <div class="container">
     <div class="row justify-content-center">
         <div class="col-md-8">
             <div class="card">
@@ -14,10 +15,9 @@
                         </div>
                     @endif
 
-                    <scene-simple :json="{{App\Car::$vehicle_example}}"></scene-simple>
                 </div>
             </div>
         </div>
     </div>
-</div>
+</div> --}}
 @endsection
