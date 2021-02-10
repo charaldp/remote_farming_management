@@ -31,12 +31,22 @@ export default {
             world: null,
             groundBody: null,
             sphereBody: null,
+            raycaster: null,
+            mouse: null,
         }
+    },
+    created() {
+        window.addEventListener('mousemove',this.updateMouse);
+        window.addEventListener('mousedown',this.onSceneClick);
+    },
+    destroyed: function() {
+        window.removeEventListener('mousemove', this.updateMouse);
+        window.removeEventListener('mousedown',this.onSceneClick);
     },
     methods: {
         init: function() {
             this.world = new CANNON.World();
-            this.world.gravity.set(0, 0, -9.82); // m/s²
+            this.world.gravity.set(0, -9.82, 0); // m/s²
             var radius = 1; // m
             this.sphereBody = new CANNON.Body({
                 mass: 5, // kg
@@ -49,6 +59,8 @@ export default {
             });
             var groundShape = new CANNON.Plane();
             this.groundBody.addShape(groundShape);
+            var axis = new CANNON.Vec3(1,0,0);
+            this.groundBody.quaternion.setFromAxisAngle(axis, - Math.PI / 2);
             this.world.addBody(this.groundBody);
 
 
@@ -92,17 +104,18 @@ export default {
             this.camera.position.y = 25
             this.controls = new OrbitControls( this.camera, this.renderer.domElement )
             this.controls.target = new THREE.Vector3(0,0,0);
-            const animate = function() {}
+            this.mouse = new THREE.Vector2();
+            this.raycaster = new THREE.Raycaster();
         },
         animate: function() {
-            requestAnimationFrame(this.animate)
+            requestAnimationFrame(this.animate);
             this.timestamp2 = performance.now();
             this.timestep = this.timestamp2 - this.timestamp;
             this.timestamp = this.timestamp2;
 
             this.updatePhysicsStep();
-            
-            
+            // this.updateMouse();
+            this.raycaster.setFromCamera( this.mouse, this.camera );
             // this.updatePhysics();
             // this.controls.target = this.cube.position.clone();
             this.controls.update();
@@ -121,6 +134,7 @@ export default {
                 this.cubePhys.acceleration = this.cubePhys.gravityForce;
             }
             this.cubePhys.speed += this.cubePhys.acceleration * 0.001 * this.timestep;
+            // console.log(this.cubePhys.speed);
             this.cube.position.y += this.cubePhys.speed * 0.001 * this.timestep;
         },
         updatePhysicsStep() {
@@ -134,6 +148,13 @@ export default {
             this.cube.quaternion.z = this.sphereBody.quaternion.z;
             this.cube.quaternion.w = this.sphereBody.quaternion.w;
         },
+        updateMouse( event ) {
+            // calculate mouse position in normalized device coordinates
+            // (-1 to +1) for both components
+            this.mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
+            this.mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
+            // console.log('mouse', event.clientX, event.clientY);
+        }
     },
     mounted() {
         // console.log(this.json);
