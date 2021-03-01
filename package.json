@@ -27,7 +27,7 @@
         "cannon": "^0.6.2",
         "dat.gui": "^0.7.7",
         "oimo": "^1.0.9",
-        "three": "^0.116.1",
+        "three": "^0.125.0",
         "vue": "^2.6.11",
         "vue-object-merge": "^0.1.8",
         "vue-threejs": "^0.2.0-alpha.1",
