@@ -1,4 +1,4 @@
-@extends('layouts.app')
+@extends('layouts.app_simple')
 
 @section('content')
 <scene-simple :json="{{App\Car::$vehicle_example}}"></scene-simple>
