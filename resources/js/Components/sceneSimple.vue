@@ -144,9 +144,13 @@ export default {
             // this.world.bodies[0].velocity.y += 5
             const intersects = this.raycaster.intersectObjects( this.scene.children );
             if (intersects.length > 0) {
+                console.log(this.camera, intersects);
                 for (let i = 0; i < 4; i++) {
                     if (intersects[ 0 ].object.uuid == this.wheels.representation[ i ].uuid) {
-                        this.wheels.phys[i].applyImpulse(new CANNON.Vec3(this.camera.rotation.x, this.camera.rotation.y, this.camera.rotation.z), new CANNON.Vec3(intersects[0].point.x, intersects[0].point.y, intersects[0].point.z));
+                        // this.camera.getWorldDirection();
+                        var vector = new THREE.Vector3();
+                        vector.subVectors (intersects[0].point, this.camera.position);
+                        this.wheels.phys[i].applyImpulse(new CANNON.Vec3(vector.x, vector.y, vector.z), new CANNON.Vec3(intersects[0].point.x, intersects[0].point.y, intersects[0].point.z));
                         break;
                         // this.wheels.representation[ i ].material.color.set( 0xff0000 );
                     }
