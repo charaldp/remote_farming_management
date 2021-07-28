@@ -1,5 +1,5 @@
 <template>
-    <div id="container" @click="onSceneClick"></div>
+    <div ref="container" @contextmenu="onContectMenu($event)" @click="onSceneClick"></div>
 </template>
 <script>
 import * as THREE from 'three'
@@ -89,7 +89,8 @@ export default {
             this.renderer = new THREE.WebGLRenderer()
             var scaler = 1;
             this.renderer.setSize(scaler*window.innerWidth, scaler*window.innerHeight)
-            document.body.appendChild(this.renderer.domElement)
+            this.$refs.container.appendChild(this.renderer.domElement);
+            // document.body.appendChild(this.renderer.domElement);
 
             // const geometry = new THREE.CylinderGeometry(0.5, 0.5, 0.3, 64, 10).rotateX(Math.PI / 2).translate(0, 0.5, 0);
             const geometry = new THREE.CylinderGeometry(1, 1, 0.2, 32, 32).rotateX(-Math.PI / 2);
@@ -193,6 +194,9 @@ export default {
             this.mouse.x = ( event.clientX / window.innerWidth ) * 2 - 1;
             this.mouse.y = - ( event.clientY / window.innerHeight ) * 2 + 1;
             // console.log('mouse', event.clientX, event.clientY);
+        },
+        onContectMenu(event) {
+            console.log(event);
         }
     },
     mounted() {
