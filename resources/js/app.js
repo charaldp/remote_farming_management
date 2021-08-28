@@ -9,7 +9,7 @@ require('./bootstrap');
 window.Vue = require('vue');
 import Vuex from 'vuex';
 import { mapState } from 'vuex';
-import storeData from "./store/index.js"    
+import storeData from "./store/index.js"
 // import VueThreejs from 'vue-threejs'
 // Vue.use(VueThreejs)
 /**
@@ -24,8 +24,6 @@ import storeData from "./store/index.js"
 // files.keys().map(key => Vue.component(key.split('/').pop().split('.')[0], files(key).default))
 
 Vue.component('example-component', require('./components/ExampleComponent.vue').default);
-Vue.component('scene-component', require('./components/scene.vue').default);
-Vue.component('scene-simple', require('./components/sceneSimple.vue').default);
 
 import * as Three from 'three';
 // const THREE = require('THREE')
