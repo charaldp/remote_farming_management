@@ -1,7 +1,5 @@
 <?php
 
-use Illuminate\Support\Facades\Route;
-
 /*
 |--------------------------------------------------------------------------
 | Web Routes
@@ -17,13 +15,10 @@ Route::get('/', function () {
     return view('welcome');
 });
 
-// Route::GET('/scene', 'scene')->name('scene');
+Route::get('login', 'LoginController@show');
+Route::post('login', [ 'as' => 'login', 'uses' => 'LoginController@do']);
+Route::get('/home', 'HomeController@index')->name('home');
 
 Auth::routes();
-Route::get('/scene', function () {
-    return view('scene');
-});
+
 Route::get('/home', 'HomeController@index')->name('home');
-Route::get('/scenevue', function () {
-    return view('scene_vue');
-});

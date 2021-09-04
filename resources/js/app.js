@@ -7,11 +7,7 @@
 require('./bootstrap');
 
 window.Vue = require('vue');
-import Vuex from 'vuex';
-import { mapState } from 'vuex';
-import storeData from "./store/index.js"
-// import VueThreejs from 'vue-threejs'
-// Vue.use(VueThreejs)
+
 /**
  * The following block of code may be used to automatically register your
  * Vue components. It will recursively scan this directory for the Vue
@@ -24,14 +20,6 @@ import storeData from "./store/index.js"
 // files.keys().map(key => Vue.component(key.split('/').pop().split('.')[0], files(key).default))
 
 Vue.component('example-component', require('./components/ExampleComponent.vue').default);
-
-import * as Three from 'three';
-// const THREE = require('THREE')
-Vue.use(Three);
-
-const store = new Vuex.Store(
-    storeData
- )
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to
