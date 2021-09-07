@@ -8,13 +8,15 @@
                 <div class="card-header">Dashboard</div>
 
                 <div class="card-body">
-                    @if (session('status'))
-                        <div class="alert alert-success" role="alert">
-                            {{ session('status') }}
-                        </div>
-                    @endif
+                    <a href="{{route('schedule.create')}}" class="btn btn-success">{{__('Add Schedule')}}<i class="fa fa-plus-square fa-fw"></i></a>
 
-                    You are logged in!
+                    @foreach((Auth::user())->schedules as $schedule)
+                        {{$schedule->name}}
+
+                        @foreach($schedule->watering_weekdays as $key => $weekday)
+                            {{$schedule->weekday($key)}}
+                        @endforeach
+                    @endforeach
                 </div>
             </div>
         </div>
