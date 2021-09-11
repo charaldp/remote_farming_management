@@ -17,6 +17,23 @@ class ScheduleController extends Controller
         $view_data = [
 
         ];
-        return view('schedule.index')->with($view_data);
+        return view('schedule.index')->with(['schedule' => $schedule]);
     }
+
+    public function store() {
+
+    }
+
+    public function edit(Schedule $schedule) {
+        return view('schedule.index')->with(['schedule' => $schedule]);
+    }
+
+    public function update() {
+
+    }
+
+    public function destroy() {
+
+    }
+
 }
