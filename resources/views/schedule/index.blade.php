@@ -12,13 +12,47 @@
                             <div class="caption">{{__('Name')}}</div>
                         </div>
                         <div class="portlet-body">
-                            <div class="form-group col-md-12">
-                                <label class="col-md-6 control-label" for="schedule_name">{{__('Schedule Name')}}</label>
-                                <div class="col-md-4">
-                                    <input type="text" class="form-control" name="name" id="schedule_name">{{$schedule->name}}</input>
+                            <form method="POST" action="{{route('schedule.store')}}">
+                                @csrf
+                                <div class="form-group col-md-12">
+                                    <label class="col-md-6 control-label" for="schedule_name">{{__('Schedule Name')}}</label>
+                                    <div class="col-md-4">
+                                        <input type="text" class="form-control" name="name" id="schedule_name">{{$schedule->name}}</input>
+                                    </div>
+                                    <label class="col-md-2 control-label" for="schedule_name">{{__('')}}</label>
                                 </div>
-                                <label class="col-md-2 control-label" for="schedule_name">{{__('')}}</label>
-                            </div>
+                                <div class="form-group col-md-12">
+                                    <label class="col-md-6 control-label" for="schedule_name">{{__('Schedule Name')}}</label>
+                                    <div class="col-md-4">
+                                        <input type="text" class="form-control" name="name" id="schedule_name">{{$schedule->name}}</input>
+                                    </div>
+                                    <label class="col-md-2 control-label" for="schedule_name">{{__('')}}</label>
+                                </div>
+                                <div class="form-group col-md-12">
+                                    <label class="col-md-6 control-label" for="schedule_name">{{__('Schedule Name')}}</label>
+                                    <div class="col-md-4">
+                                        <input type="text" class="form-control" name="name" id="schedule_name">{{$schedule->name}}</input>
+                                    </div>
+                                    <label class="col-md-2 control-label" for="schedule_name">{{__('')}}</label>
+                                </div>
+                                <div class="form-group col-md-12">
+                                    <label class="col-md-6 control-label" for="schedule_name">{{__('Schedule Name')}}</label>
+                                    <div class="col-md-4">
+                                        <input type="text" class="form-control" name="name" id="schedule_name">{{$schedule->name}}</input>
+                                    </div>
+                                    <label class="col-md-2 control-label" for="schedule_name">{{__('')}}</label>
+                                </div>
+                                <div class="form-group col-md-12">
+                                    <label class="col-md-6 control-label" for="schedule_name">{{__('Schedule Name')}}</label>
+                                    <div class="col-md-4">
+                                        <input type="text" class="form-control" name="name" id="schedule_name">{{$schedule->name}}</input>
+                                    </div>
+                                    <label class="col-md-2 control-label" for="schedule_name">{{__('')}}</label>
+                                </div>
+                                <div>
+                                    <button type="submit">Create</button>
+                                </div>
+                            </form>
                         </div>
                     </div>
                     {{-- <div class="form-group col-md-12">

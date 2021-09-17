@@ -4,6 +4,8 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Schedule;
+use App\User;
+use Illuminate\Support\Facades\Auth;
 
 class ScheduleController extends Controller
 {
@@ -20,8 +22,10 @@ class ScheduleController extends Controller
         return view('schedule.index')->with(['schedule' => $schedule]);
     }
 
-    public function store() {
+    public function store(Request $request) {
 
+        $user = User::find(Auth::user()->id);
+        dd($user, $request);
     }
 
     public function edit(Schedule $schedule) {

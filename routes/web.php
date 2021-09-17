@@ -22,3 +22,4 @@ Route::get('/home', 'HomeController@index')->name('home');
 Auth::routes();
 
 Route::get('/schedule/create', 'ScheduleController@create')->name('schedule.create');
+Route::post('/schedule/store', 'ScheduleController@store')->name('schedule.store');
