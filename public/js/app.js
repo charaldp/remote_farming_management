@@ -5392,6 +5392,79 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/Schedule.vue?vue&type=script&lang=js&":
+/*!***************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/Schedule.vue?vue&type=script&lang=js& ***!
+  \***************************************************************************************************************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
+  name: "schedule",
+  props: ['schedule_in'],
+  created: function created() {
+    this.$store.commit('MERGE', {
+      changes: {
+        schedule: this.schedule_in
+      },
+      type: 'schedule'
+    });
+  },
+  mounted: function mounted() {},
+  methods: {
+    createSchedule: function createSchedule() {}
+  }
+});
+
+/***/ }),
+
 /***/ "./resources/js/app.js":
 /*!*****************************!*\
   !*** ./resources/js/app.js ***!
@@ -5417,6 +5490,7 @@ window.Vue = (__webpack_require__(/*! vue */ "./node_modules/vue/dist/vue.esm.js
 // files.keys().map(key => Vue.component(key.split('/').pop().split('.')[0], files(key).default))
 
 Vue.component('example-component', (__webpack_require__(/*! ./components/ExampleComponent.vue */ "./resources/js/components/ExampleComponent.vue")["default"]));
+Vue.component('schedule', (__webpack_require__(/*! ./components/Schedule.vue */ "./resources/js/components/Schedule.vue")["default"]));
 /**
  * Next, we will create a fresh Vue application instance and attach it to
  * the page. Then, you may begin adding components to this application
@@ -27950,6 +28024,45 @@ component.options.__file = "resources/js/components/ExampleComponent.vue"
 
 /***/ }),
 
+/***/ "./resources/js/components/Schedule.vue":
+/*!**********************************************!*\
+  !*** ./resources/js/components/Schedule.vue ***!
+  \**********************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _Schedule_vue_vue_type_template_id_5f748482___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./Schedule.vue?vue&type=template&id=5f748482& */ "./resources/js/components/Schedule.vue?vue&type=template&id=5f748482&");
+/* harmony import */ var _Schedule_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! ./Schedule.vue?vue&type=script&lang=js& */ "./resources/js/components/Schedule.vue?vue&type=script&lang=js&");
+/* harmony import */ var _node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__ = __webpack_require__(/*! !../../../node_modules/vue-loader/lib/runtime/componentNormalizer.js */ "./node_modules/vue-loader/lib/runtime/componentNormalizer.js");
+
+
+
+
+
+/* normalize component */
+;
+var component = (0,_node_modules_vue_loader_lib_runtime_componentNormalizer_js__WEBPACK_IMPORTED_MODULE_2__["default"])(
+  _Schedule_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_1__["default"],
+  _Schedule_vue_vue_type_template_id_5f748482___WEBPACK_IMPORTED_MODULE_0__.render,
+  _Schedule_vue_vue_type_template_id_5f748482___WEBPACK_IMPORTED_MODULE_0__.staticRenderFns,
+  false,
+  null,
+  null,
+  null
+  
+)
+
+/* hot reload */
+if (false) { var api; }
+component.options.__file = "resources/js/components/Schedule.vue"
+/* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (component.exports);
+
+/***/ }),
+
 /***/ "./resources/js/components/ExampleComponent.vue?vue&type=script&lang=js&":
 /*!*******************************************************************************!*\
   !*** ./resources/js/components/ExampleComponent.vue?vue&type=script&lang=js& ***!
@@ -27966,6 +28079,22 @@ __webpack_require__.r(__webpack_exports__);
 
 /***/ }),
 
+/***/ "./resources/js/components/Schedule.vue?vue&type=script&lang=js&":
+/*!***********************************************************************!*\
+  !*** ./resources/js/components/Schedule.vue?vue&type=script&lang=js& ***!
+  \***********************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
+/* harmony export */ });
+/* harmony import */ var _node_modules_babel_loader_lib_index_js_clonedRuleSet_5_0_rules_0_use_0_node_modules_vue_loader_lib_index_js_vue_loader_options_Schedule_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./Schedule.vue?vue&type=script&lang=js& */ "./node_modules/babel-loader/lib/index.js??clonedRuleSet-5[0].rules[0].use[0]!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/Schedule.vue?vue&type=script&lang=js&");
+ /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = (_node_modules_babel_loader_lib_index_js_clonedRuleSet_5_0_rules_0_use_0_node_modules_vue_loader_lib_index_js_vue_loader_options_Schedule_vue_vue_type_script_lang_js___WEBPACK_IMPORTED_MODULE_0__["default"]); 
+
+/***/ }),
+
 /***/ "./resources/js/components/ExampleComponent.vue?vue&type=template&id=299e239e&":
 /*!*************************************************************************************!*\
   !*** ./resources/js/components/ExampleComponent.vue?vue&type=template&id=299e239e& ***!
@@ -27979,6 +28108,23 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "staticRenderFns": () => (/* reexport safe */ _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_ExampleComponent_vue_vue_type_template_id_299e239e___WEBPACK_IMPORTED_MODULE_0__.staticRenderFns)
 /* harmony export */ });
 /* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_ExampleComponent_vue_vue_type_template_id_299e239e___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./ExampleComponent.vue?vue&type=template&id=299e239e& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/ExampleComponent.vue?vue&type=template&id=299e239e&");
+
+
+/***/ }),
+
+/***/ "./resources/js/components/Schedule.vue?vue&type=template&id=5f748482&":
+/*!*****************************************************************************!*\
+  !*** ./resources/js/components/Schedule.vue?vue&type=template&id=5f748482& ***!
+  \*****************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "render": () => (/* reexport safe */ _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Schedule_vue_vue_type_template_id_5f748482___WEBPACK_IMPORTED_MODULE_0__.render),
+/* harmony export */   "staticRenderFns": () => (/* reexport safe */ _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Schedule_vue_vue_type_template_id_5f748482___WEBPACK_IMPORTED_MODULE_0__.staticRenderFns)
+/* harmony export */ });
+/* harmony import */ var _node_modules_vue_loader_lib_loaders_templateLoader_js_vue_loader_options_node_modules_vue_loader_lib_index_js_vue_loader_options_Schedule_vue_vue_type_template_id_5f748482___WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! -!../../../node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!../../../node_modules/vue-loader/lib/index.js??vue-loader-options!./Schedule.vue?vue&type=template&id=5f748482& */ "./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/Schedule.vue?vue&type=template&id=5f748482&");
 
 
 /***/ }),
@@ -28025,6 +28171,294 @@ var staticRenderFns = [
     ])
   },
 ]
+render._withStripped = true
+
+
+
+/***/ }),
+
+/***/ "./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/Schedule.vue?vue&type=template&id=5f748482&":
+/*!********************************************************************************************************************************************************************************************************************!*\
+  !*** ./node_modules/vue-loader/lib/loaders/templateLoader.js??vue-loader-options!./node_modules/vue-loader/lib/index.js??vue-loader-options!./resources/js/components/Schedule.vue?vue&type=template&id=5f748482& ***!
+  \********************************************************************************************************************************************************************************************************************/
+/***/ ((__unused_webpack_module, __webpack_exports__, __webpack_require__) => {
+
+"use strict";
+__webpack_require__.r(__webpack_exports__);
+/* harmony export */ __webpack_require__.d(__webpack_exports__, {
+/* harmony export */   "render": () => (/* binding */ render),
+/* harmony export */   "staticRenderFns": () => (/* binding */ staticRenderFns)
+/* harmony export */ });
+var render = function () {
+  var _vm = this
+  var _h = _vm.$createElement
+  var _c = _vm._self._c || _h
+  return _c("div", [
+    _c("div", { staticClass: "form-group col-md-12" }, [
+      _c(
+        "label",
+        {
+          staticClass: "col-md-6 control-label",
+          attrs: { for: "schedule_name" },
+        },
+        [_vm._v(_vm._s("Schedule Name"))]
+      ),
+      _vm._v(" "),
+      _c("div", { staticClass: "col-md-4" }, [
+        _c("input", {
+          directives: [
+            {
+              name: "model",
+              rawName: "v-model",
+              value: _vm.schedule.name,
+              expression: "schedule.name",
+            },
+          ],
+          staticClass: "form-control",
+          attrs: { type: "text", name: "name", id: "schedule_name" },
+          domProps: { value: _vm.schedule.name },
+          on: {
+            input: function ($event) {
+              if ($event.target.composing) {
+                return
+              }
+              _vm.$set(_vm.schedule, "name", $event.target.value)
+            },
+          },
+        }),
+      ]),
+      _vm._v(" "),
+      _c(
+        "label",
+        {
+          staticClass: "col-md-2 control-label",
+          attrs: { for: "schedule_name" },
+        },
+        [_vm._v("{{}}")]
+      ),
+    ]),
+    _vm._v(" "),
+    _c("div", { staticClass: "form-group col-md-12" }, [
+      _c(
+        "label",
+        {
+          staticClass: "col-md-6 control-label",
+          attrs: { for: "schedule_watering_weekdays" },
+        },
+        [_vm._v(_vm._s("Watering Weekdays"))]
+      ),
+      _vm._v(" "),
+      _c("div", { staticClass: "col-md-4" }, [
+        _c("input", {
+          directives: [
+            {
+              name: "model",
+              rawName: "v-model",
+              value: _vm.schedule.watering_weekdays,
+              expression: "schedule.watering_weekdays",
+            },
+          ],
+          staticClass: "form-control",
+          attrs: {
+            type: "text",
+            name: "watering_weekdays",
+            id: "schedule_watering_weekdays",
+          },
+          domProps: { value: _vm.schedule.watering_weekdays },
+          on: {
+            input: function ($event) {
+              if ($event.target.composing) {
+                return
+              }
+              _vm.$set(_vm.schedule, "watering_weekdays", $event.target.value)
+            },
+          },
+        }),
+      ]),
+      _vm._v(" "),
+      _c(
+        "label",
+        {
+          staticClass: "col-md-2 control-label",
+          attrs: { for: "schedule_watering_weekdays" },
+        },
+        [_vm._v("{{}}")]
+      ),
+    ]),
+    _vm._v(" "),
+    _c("div", { staticClass: "form-group col-md-12" }, [
+      _c(
+        "label",
+        {
+          staticClass: "col-md-6 control-label",
+          attrs: { for: "schedule_watering_weekdays_frequency" },
+        },
+        [_vm._v(_vm._s("Watering Frequency"))]
+      ),
+      _vm._v(" "),
+      _c("div", { staticClass: "col-md-4" }, [
+        _c("input", {
+          directives: [
+            {
+              name: "model",
+              rawName: "v-model",
+              value: _vm.schedule.watering_weekdays_frequency,
+              expression: "schedule.watering_weekdays_frequency",
+            },
+          ],
+          staticClass: "form-control",
+          attrs: {
+            type: "text",
+            name: "watering_weekdays_frequency",
+            id: "schedule_watering_weekdays_frequency",
+          },
+          domProps: { value: _vm.schedule.watering_weekdays_frequency },
+          on: {
+            input: function ($event) {
+              if ($event.target.composing) {
+                return
+              }
+              _vm.$set(
+                _vm.schedule,
+                "watering_weekdays_frequency",
+                $event.target.value
+              )
+            },
+          },
+        }),
+      ]),
+      _vm._v(" "),
+      _c(
+        "label",
+        {
+          staticClass: "col-md-2 control-label",
+          attrs: { for: "schedule_watering_weekdays_frequency" },
+        },
+        [_vm._v("{{}}")]
+      ),
+    ]),
+    _vm._v(" "),
+    _c("div", { staticClass: "form-group col-md-12" }, [
+      _c(
+        "label",
+        {
+          staticClass: "col-md-6 control-label",
+          attrs: { for: "schedule_watering_weekdays_time" },
+        },
+        [_vm._v(_vm._s("Watering Weekdays Time"))]
+      ),
+      _vm._v(" "),
+      _c("div", { staticClass: "col-md-4" }, [
+        _c("input", {
+          directives: [
+            {
+              name: "model",
+              rawName: "v-model",
+              value: _vm.schedule.watering_weekdays_time,
+              expression: "schedule.watering_weekdays_time",
+            },
+          ],
+          staticClass: "form-control",
+          attrs: {
+            type: "text",
+            name: "watering_weekdays_time",
+            id: "schedule_watering_weekdays_time",
+          },
+          domProps: { value: _vm.schedule.watering_weekdays_time },
+          on: {
+            input: function ($event) {
+              if ($event.target.composing) {
+                return
+              }
+              _vm.$set(
+                _vm.schedule,
+                "watering_weekdays_time",
+                $event.target.value
+              )
+            },
+          },
+        }),
+      ]),
+      _vm._v(" "),
+      _c(
+        "label",
+        {
+          staticClass: "col-md-2 control-label",
+          attrs: { for: "schedule_watering_weekdays_time" },
+        },
+        [_vm._v("{{}}")]
+      ),
+    ]),
+    _vm._v(" "),
+    _c("div", { staticClass: "form-group col-md-12" }, [
+      _c(
+        "label",
+        {
+          staticClass: "col-md-6 control-label",
+          attrs: { for: "schedule_watering_weekdays_duration" },
+        },
+        [_vm._v(_vm._s("Watering Weekdays Duration"))]
+      ),
+      _vm._v(" "),
+      _c("div", { staticClass: "col-md-4" }, [
+        _c("input", {
+          directives: [
+            {
+              name: "model",
+              rawName: "v-model",
+              value: _vm.schedule.watering_weekdays_duration,
+              expression: "schedule.watering_weekdays_duration",
+            },
+          ],
+          staticClass: "form-control",
+          attrs: {
+            type: "text",
+            name: "watering_weekdays_duration",
+            id: "schedule_watering_weekdays_duration",
+          },
+          domProps: { value: _vm.schedule.watering_weekdays_duration },
+          on: {
+            input: function ($event) {
+              if ($event.target.composing) {
+                return
+              }
+              _vm.$set(
+                _vm.schedule,
+                "watering_weekdays_duration",
+                $event.target.value
+              )
+            },
+          },
+        }),
+      ]),
+      _vm._v(" "),
+      _c(
+        "label",
+        {
+          staticClass: "col-md-2 control-label",
+          attrs: { for: "schedule_watering_weekdays_duration" },
+        },
+        [_vm._v("{{}}")]
+      ),
+    ]),
+    _vm._v(" "),
+    _c("div", [
+      _c(
+        "button",
+        {
+          attrs: { type: "submit" },
+          on: {
+            click: function ($event) {
+              return _vm.createSchedule()
+            },
+          },
+        },
+        [_vm._v("Create")]
+      ),
+    ]),
+  ])
+}
+var staticRenderFns = []
 render._withStripped = true
 
 

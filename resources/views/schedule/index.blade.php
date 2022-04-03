@@ -22,32 +22,32 @@
                                     <label class="col-md-2 control-label" for="schedule_name">{{__('')}}</label>
                                 </div>
                                 <div class="form-group col-md-12">
-                                    <label class="col-md-6 control-label" for="schedule_name">{{__('Schedule Name')}}</label>
+                                    <label class="col-md-6 control-label" for="schedule_watering_weekdays">{{__('Watering Weekdays')}}</label>
                                     <div class="col-md-4">
-                                        <input type="text" class="form-control" name="name" id="schedule_name">{{$schedule->name}}</input>
+                                        <input type="text" class="form-control" name="watering_weekdays" id="schedule_watering_weekdays">{{$schedule->watering_weekdays}}</input>
                                     </div>
-                                    <label class="col-md-2 control-label" for="schedule_name">{{__('')}}</label>
+                                    <label class="col-md-2 control-label" for="schedule_watering_weekdays">{{__('')}}</label>
                                 </div>
                                 <div class="form-group col-md-12">
-                                    <label class="col-md-6 control-label" for="schedule_name">{{__('Schedule Name')}}</label>
+                                    <label class="col-md-6 control-label" for="schedule_watering_weekdays_frequency">{{__('Watering Frequency')}}</label>
                                     <div class="col-md-4">
-                                        <input type="text" class="form-control" name="name" id="schedule_name">{{$schedule->name}}</input>
+                                        <input type="text" class="form-control" name="watering_weekdays_frequency" id="schedule_watering_weekdays_frequency">{{$schedule->watering_weekdays_frequency}}</input>
                                     </div>
-                                    <label class="col-md-2 control-label" for="schedule_name">{{__('')}}</label>
+                                    <label class="col-md-2 control-label" for="schedule_watering_weekdays_frequency">{{__('')}}</label>
                                 </div>
                                 <div class="form-group col-md-12">
-                                    <label class="col-md-6 control-label" for="schedule_name">{{__('Schedule Name')}}</label>
+                                    <label class="col-md-6 control-label" for="schedule_watering_weekdays_time">{{__('Watering Weekdays Time')}}</label>
                                     <div class="col-md-4">
-                                        <input type="text" class="form-control" name="name" id="schedule_name">{{$schedule->name}}</input>
+                                        <input type="text" class="form-control" name="watering_weekdays_time" id="schedule_watering_weekdays_time">{{$schedule->watering_weekdays_time}}</input>
                                     </div>
-                                    <label class="col-md-2 control-label" for="schedule_name">{{__('')}}</label>
+                                    <label class="col-md-2 control-label" for="schedule_watering_weekdays_time">{{__('')}}</label>
                                 </div>
                                 <div class="form-group col-md-12">
-                                    <label class="col-md-6 control-label" for="schedule_name">{{__('Schedule Name')}}</label>
+                                    <label class="col-md-6 control-label" for="schedule_watering_weekdays_duration">{{__('Watering Weekdays Duration')}}</label>
                                     <div class="col-md-4">
-                                        <input type="text" class="form-control" name="name" id="schedule_name">{{$schedule->name}}</input>
+                                        <input type="text" class="form-control" name="watering_weekdays_duration" id="schedule_watering_weekdays_duration">{{$schedule->watering_weekdays_duration}}</input>
                                     </div>
-                                    <label class="col-md-2 control-label" for="schedule_name">{{__('')}}</label>
+                                    <label class="col-md-2 control-label" for="schedule_watering_weekdays_duration">{{__('')}}</label>
                                 </div>
                                 <div>
                                     <button type="submit">Create</button>
