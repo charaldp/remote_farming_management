@@ -1,7 +1,10 @@
 <?php
 
+namespace Database\Seeders;
+
 use Illuminate\Database\Seeder;
-use App\User;
+use App\Models\User;
+use Illuminate\Support\Facades\DB;
 
 class ScheduleSeeder extends Seeder
 {
