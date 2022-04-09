@@ -6,7 +6,13 @@
 
 require('./bootstrap');
 
+import Vuex from 'vuex';
+
 window.Vue = require('vue').default;
+
+Vue.use(Vuex);
+
+import storeData from "./store/index.js"
 
 /**
  * The following block of code may be used to automatically register your
@@ -28,6 +34,11 @@ Vue.component('schedule', require('./components/Schedule.vue').default);
  * or customize the JavaScript scaffolding to fit your unique needs.
  */
 
+const store = new Vuex.Store(
+    storeData
+);
+
 const app = new Vue({
     el: '#app',
+    store: store
 });

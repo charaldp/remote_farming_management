@@ -1,5 +1,7 @@
 import { getField, updateField } from 'vuex-map-fields';
 import {stateMerge} from 'vue-object-merge'
+import Vuex from 'vuex';
+
 export default {
     state: {
         stateData: {},

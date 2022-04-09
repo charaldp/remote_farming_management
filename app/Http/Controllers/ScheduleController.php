@@ -4,17 +4,17 @@ namespace App\Http\Controllers;
 
 use Illuminate\Http\Request;
 use App\Models\Schedule;
-use App\User;
+use App\Models\User;
 use Illuminate\Support\Facades\Auth;
 
 class ScheduleController extends Controller
 {
     public function create() {
         $schedule = new Schedule([
-            'watering_weekdays' => ['0' => '2'],
-            'watering_weekdays_frequency' => ['0' => 1],
-            'watering_weekdays_time' => ['0' => 7200],
-            'watering_weekdays_duration' => ['0' => 5400],
+            'watering_weekdays' => ['SU' => true],
+            'watering_weekdays_frequency' => ['SU' => 1],
+            'watering_weekdays_time' => ['SU' => 7200],
+            'watering_weekdays_duration' => ['SU' => 5400],
         ]);
         $view_data = [
 
@@ -24,7 +24,7 @@ class ScheduleController extends Controller
 
     public function store(Request $request) {
 
-        $user = User::find(Auth::user()->id);
+        $user = Auth::user();
         dd($user, $request);
     }
 

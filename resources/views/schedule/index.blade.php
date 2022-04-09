@@ -12,7 +12,12 @@
                             <div class="caption">{{__('Name')}}</div>
                         </div>
                         <div class="portlet-body">
-                            <form method="POST" action="{{route('schedule.store')}}">
+                            <schedule
+                                :schedule_in="{{$schedule}}"
+                                :weekmap="{{json_encode($schedule::$weekMap)}}"
+                            >
+                            </schedule>
+                            {{-- <form method="POST" action="{{route('schedule.store')}}">
                                 @csrf
                                 <div class="form-group col-md-12">
                                     <label class="col-md-6 control-label" for="schedule_name">{{__('Schedule Name')}}</label>
@@ -52,7 +57,7 @@
                                 <div>
                                     <button type="submit">Create</button>
                                 </div>
-                            </form>
+                            </form> --}}
                         </div>
                     </div>
                     {{-- <div class="form-group col-md-12">

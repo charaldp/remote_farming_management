@@ -24,13 +24,13 @@ class Schedule extends Model
     ];
 
     public static $weekMap = [
-        0 => 'SU',
-        1 => 'MO',
-        2 => 'TU',
-        3 => 'WE',
-        4 => 'TH',
-        5 => 'FR',
-        6 => 'SA',
+        'SU' => "SUNDAY",
+        'MO' => "MONDAY",
+        'TU' => "TUESDAY",
+        'WE' => "WEDNESDAY",
+        'TH' => "THURSDAY",
+        'FR' => "FRIDAY",
+        'SA' => "SATURDAY",
     ];
 
     public function weekday($key) {
