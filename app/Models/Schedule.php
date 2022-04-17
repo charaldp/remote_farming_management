@@ -4,7 +4,7 @@ namespace App\Models;
 
 use Illuminate\Database\Eloquent\Model;
 
-class Schedule extends Model
+class Schedule extends BaseModel
 {
     protected $table = 'schedules';
 
@@ -33,8 +33,8 @@ class Schedule extends Model
         'SA' => "SATURDAY",
     ];
 
-    public function weekday($key) {
+    public function weekday($key)
+    {
         return self::$weekMap[$this->watering_weekdays[$key]];
     }
-
 }

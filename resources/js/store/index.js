@@ -1,25 +1,24 @@
 import { getField, updateField } from 'vuex-map-fields';
-import {stateMerge} from 'vue-object-merge'
-import Vuex from 'vuex';
+import { stateMerge } from 'vue-object-merge'
 
 export default {
     state: {
-        stateData: {},
+        schedule: {},
     },
 
     getters: {
         getField,
-        getStateData(state){ //take parameter state
-            return state.stateData
+        getSchedule(state) {
+            return state.schedule
         },
     },
     mutations: {
         updateField,
-        stateData(state, payload) {
-            return state.stateData = Object.assign({}, state.stateData, payload.stateData)
+        schedule(state, payload) {
+            return state.schedule = Object.assign({}, state.schedule, payload.schedule)
         },
         MERGE(state, value) {
-			stateMerge(state, value.changes, null, value.ignoreNull)
-		},
+            stateMerge(state, value.changes, null, value.ignoreNull)
+        },
     }
 }
