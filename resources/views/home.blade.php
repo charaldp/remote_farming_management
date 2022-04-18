@@ -12,7 +12,7 @@
                         <table>
                             <th><b>{{$schedule->name}}</b></th>
                             <tr>
-                            @foreach(($schedule->watering_weekdays) as $key => $weekday)
+                            @foreach($schedule->weekdays() as $key => $weekday)
                                 <td>
                                     {{$schedule->weekday($key)}}
                                 </td>

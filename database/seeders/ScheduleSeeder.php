@@ -19,10 +19,10 @@ class ScheduleSeeder extends Seeder
         DB::table('schedules')->insert([
             'user_id' => $user->id,
             'name' => 'Typical Schedule',
-            'watering_weekdays' => json_encode(['0' => 'MO', '1' => 'TH']),
-            'watering_weekdays_frequency' => json_encode(['0' => 1, '1' => 1]),
-            'watering_weekdays_time' => json_encode(['0' => 7200, '1' => 7200]), //2 A.M. Midnight
-            'watering_weekdays_duration' => json_encode(['0' => 5400, '1' => 5400]),
+            'watering_weekdays' => json_encode(['MO' => true, 'TH' => true]),
+            'watering_weekdays_frequency' => json_encode(['MO' => 1, 'TH' => 1]),
+            'watering_weekdays_time' => json_encode(['MO' => 7200, 'TH' => 7200]), //2 A.M. Midnight
+            'watering_weekdays_duration' => json_encode(['MO' => 5400, 'TH' => 5400]),
         ]);
     }
 }

@@ -13,7 +13,6 @@
           v-model="schedule.name"
         />
       </div>
-      <label class="col-md-2 control-label" for="schedule_name">{{ "" }}</label>
     </div>
     <div class="form-group col-md-12">
       <table>
@@ -104,7 +103,6 @@ export default {
   },
   methods: {
     createSchedule() {
-      this.weekmap2["MO" + Object.keys(this.weekmap2).length] = {};
       axios
         .post("/schedule/store", this.schedule)
         .then(

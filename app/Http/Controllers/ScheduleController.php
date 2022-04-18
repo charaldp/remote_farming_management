@@ -9,6 +9,11 @@ use Illuminate\Support\Facades\Auth;
 
 class ScheduleController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth');
+    }
+
     public function create()
     {
         $schedule = new Schedule([
@@ -33,7 +38,21 @@ class ScheduleController extends Controller
 
     public function store(Request $request)
     {
-        dd($request, $request->user());
+        if ($request->user() == null) {
+            return redirect('schedule.create');
+        }
+        $user_id = $request->user()->id;
+        $validated = $request->validate([
+            'name' => 'required|max:255',
+            'watering_weekdays' => 'required',
+            'watering_weekdays_frequency' => 'required',
+            'watering_weekdays_time' => 'required',
+            'watering_weekdays_duration' => 'required',
+        ]);
+        $schedule = new Schedule($validated);
+        $schedule->user_id = $user_id;
+        $schedule->save();
+        return $schedule;
     }
 
     public function edit(Schedule $schedule)

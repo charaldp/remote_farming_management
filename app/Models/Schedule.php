@@ -33,8 +33,13 @@ class Schedule extends BaseModel
         'SA' => "SATURDAY",
     ];
 
+    public function weekdays()
+    {
+        return array_filter($this->watering_weekdays);
+    }
+
     public function weekday($key)
     {
-        return self::$weekMap[$this->watering_weekdays[$key]];
+        return self::$weekMap[$key];
     }
 }
