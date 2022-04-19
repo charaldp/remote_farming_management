@@ -3,6 +3,7 @@
 use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ScheduleController;
+use App\Http\Controllers\SensorDeviceController;
 
 /*
 |--------------------------------------------------------------------------
@@ -28,3 +29,6 @@ Route::get('/home', [HomeController::class, 'index']);
 
 Route::get('/schedule/create', [ScheduleController::class, 'create'])->name('schedule.create');
 Route::post('/schedule/store', [ScheduleController::class, 'store'])->name('schedule.store');
+Route::get('/schedule/{schedule}/edit', [ScheduleController::class, 'edit'])->name('schedule.edit');
+
+Route::get('/sensor/create', [SensorDeviceController::class, 'create'])->name('sensor.create');

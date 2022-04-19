@@ -5446,53 +5446,105 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
 //
 //
 //
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 
 
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   name: "schedule",
-  props: ['schedule_in', 'weekmap'],
-  computed: _objectSpread({}, (0,vuex__WEBPACK_IMPORTED_MODULE_2__.mapState)(['stateData'])),
+  props: ["schedule_in", "weekmap"],
+  data: function data() {
+    return {
+      weekmap2: {}
+    };
+  },
+  computed: _objectSpread({}, (0,vuex__WEBPACK_IMPORTED_MODULE_2__.mapState)(["schedule"])),
   created: function created() {
-    this.$store.commit('MERGE', {
-      changes: {
-        stateData: {
-          schedule: this.schedule_in
-        }
-      },
-      type: 'schedule'
+    this.weekmap2 = this.weekmap; // this.schedule = this.schedule_in;
+
+    this.$store.commit("schedule", {
+      schedule: this.schedule_in,
+      type: "schedule"
     });
   },
-  mounted: function mounted() {},
+  mounted: function mounted() {
+    console.log(this.schedule_in);
+  },
   methods: {
     createSchedule: function createSchedule() {
-      axios__WEBPACK_IMPORTED_MODULE_0___default().post('/schedule/store', this.stateData.schedule).then(function (response) {
-        this.$store.commit('MERGE', {
-          changes: {
-            stateData: {
-              schedule: response
-            }
-          },
-          type: 'schedule'
+      axios__WEBPACK_IMPORTED_MODULE_0___default().post("/schedule/store", this.schedule).then(function (response) {
+        this.$store.commit("schedule", {
+          schedule: response,
+          type: "schedule"
         });
       }.bind(this))["catch"](function (err) {
         return console.log(err);
       });
     },
     clickDay: function clickDay(index, event) {
-      var watering_weekdays = {};
-      watering_weekdays[index] = event.target.checked ? true : undefined;
-      this.$store.commit('MERGE', {
+      var schedule = {
+        watering_weekdays: {},
+        watering_weekdays_frequency: {},
+        watering_weekdays_time: {},
+        watering_weekdays_duration: {}
+      };
+      schedule.watering_weekdays[index] = event.target.checked;
+
+      if (schedule.watering_weekdays[index]) {
+        schedule.watering_weekdays_frequency[index] = "";
+        schedule.watering_weekdays_time[index] = "";
+        schedule.watering_weekdays_duration[index] = "";
+      }
+
+      this.$store.commit("MERGE", {
         changes: {
-          stateData: {
-            schedule: {
-              watering_weekdays: watering_weekdays
-            }
-          }
+          schedule: schedule
         },
-        type: 'schedule'
-      });
-      console.log(this.stateData.schedule);
+        type: "schedule"
+      }); //   this.schedule.watering_weekdays = watering_weekdays;
+      //   console.log(this.schedule);
     }
   }
 });
@@ -5597,22 +5649,20 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony import */ var vue_object_merge__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! vue-object-merge */ "./node_modules/vue-object-merge/index.js");
 
 
-
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   state: {
-    stateData: {}
+    schedule: {}
   },
   getters: {
     getField: vuex_map_fields__WEBPACK_IMPORTED_MODULE_0__.getField,
-    getStateData: function getStateData(state) {
-      //take parameter state
-      return state.stateData;
+    getSchedule: function getSchedule(state) {
+      return state.schedule;
     }
   },
   mutations: {
     updateField: vuex_map_fields__WEBPACK_IMPORTED_MODULE_0__.updateField,
-    stateData: function stateData(state, payload) {
-      return state.stateData = Object.assign({}, state.stateData, payload.stateData);
+    schedule: function schedule(state, payload) {
+      return state.schedule = Object.assign({}, state.schedule, payload.schedule);
     },
     MERGE: function MERGE(state, value) {
       (0,vue_object_merge__WEBPACK_IMPORTED_MODULE_1__.stateMerge)(state, value.changes, null, value.ignoreNull);
@@ -28293,32 +28343,23 @@ var render = function () {
             {
               name: "model",
               rawName: "v-model",
-              value: _vm.stateData.schedule.name,
-              expression: "stateData.schedule.name",
+              value: _vm.schedule.name,
+              expression: "schedule.name",
             },
           ],
           staticClass: "form-control",
           attrs: { type: "text", name: "name", id: "schedule_name" },
-          domProps: { value: _vm.stateData.schedule.name },
+          domProps: { value: _vm.schedule.name },
           on: {
             input: function ($event) {
               if ($event.target.composing) {
                 return
               }
-              _vm.$set(_vm.stateData.schedule, "name", $event.target.value)
+              _vm.$set(_vm.schedule, "name", $event.target.value)
             },
           },
         }),
       ]),
-      _vm._v(" "),
-      _c(
-        "label",
-        {
-          staticClass: "col-md-2 control-label",
-          attrs: { for: "schedule_name" },
-        },
-        [_vm._v(_vm._s(""))]
-      ),
     ]),
     _vm._v(" "),
     _c("div", { staticClass: "form-group col-md-12" }, [
@@ -28327,7 +28368,7 @@ var render = function () {
         [
           _vm._m(0),
           _vm._v(" "),
-          _vm._l(this.weekmap, function (weekday, index) {
+          _vm._l(this.weekmap2, function (weekday, index) {
             return _c("tr", { key: index }, [
               _c("td", [_c("b", [_vm._v(_vm._s(index))])]),
               _vm._v(" "),
@@ -28337,27 +28378,27 @@ var render = function () {
                     {
                       name: "model",
                       rawName: "v-model",
-                      value: _vm.stateData.schedule.watering_weekdays[index],
-                      expression: "stateData.schedule.watering_weekdays[index]",
+                      value: _vm.schedule.watering_weekdays[index],
+                      expression: "schedule.watering_weekdays[index]",
                     },
                   ],
-                  attrs: { type: "checkbox" },
+                  attrs: {
+                    type: "checkbox",
+                    name: "watering_weekdays[" + index + "]",
+                  },
                   domProps: {
                     checked: Array.isArray(
-                      _vm.stateData.schedule.watering_weekdays[index]
+                      _vm.schedule.watering_weekdays[index]
                     )
-                      ? _vm._i(
-                          _vm.stateData.schedule.watering_weekdays[index],
-                          null
-                        ) > -1
-                      : _vm.stateData.schedule.watering_weekdays[index],
+                      ? _vm._i(_vm.schedule.watering_weekdays[index], null) > -1
+                      : _vm.schedule.watering_weekdays[index],
                   },
                   on: {
                     click: function ($event) {
                       return _vm.clickDay(index, $event)
                     },
                     change: function ($event) {
-                      var $$a = _vm.stateData.schedule.watering_weekdays[index],
+                      var $$a = _vm.schedule.watering_weekdays[index],
                         $$el = $event.target,
                         $$c = $$el.checked ? true : false
                       if (Array.isArray($$a)) {
@@ -28366,24 +28407,20 @@ var render = function () {
                         if ($$el.checked) {
                           $$i < 0 &&
                             _vm.$set(
-                              _vm.stateData.schedule.watering_weekdays,
+                              _vm.schedule.watering_weekdays,
                               index,
                               $$a.concat([$$v])
                             )
                         } else {
                           $$i > -1 &&
                             _vm.$set(
-                              _vm.stateData.schedule.watering_weekdays,
+                              _vm.schedule.watering_weekdays,
                               index,
                               $$a.slice(0, $$i).concat($$a.slice($$i + 1))
                             )
                         }
                       } else {
-                        _vm.$set(
-                          _vm.stateData.schedule.watering_weekdays,
-                          index,
-                          $$c
-                        )
+                        _vm.$set(_vm.schedule.watering_weekdays, index, $$c)
                       }
                     },
                   },
@@ -28396,24 +28433,19 @@ var render = function () {
                     {
                       name: "model",
                       rawName: "v-model",
-                      value:
-                        _vm.stateData.schedule.watering_weekdays_frequency[
-                          index
-                        ],
-                      expression:
-                        "stateData.schedule.watering_weekdays_frequency[index]",
+                      value: _vm.schedule.watering_weekdays_frequency[index],
+                      expression: "schedule.watering_weekdays_frequency[index]",
                     },
                   ],
                   staticClass: "form-control",
                   attrs: {
                     type: "text",
                     id: "watering_weekdays_frequency_" + index,
-                    disabled: !_vm.stateData.schedule.watering_weekdays[index],
+                    disabled: !(_vm.schedule.watering_weekdays[index] == true),
                     name: "watering_weekdays_frequency[" + index + "]",
                   },
                   domProps: {
-                    value:
-                      _vm.stateData.schedule.watering_weekdays_frequency[index],
+                    value: _vm.schedule.watering_weekdays_frequency[index],
                   },
                   on: {
                     input: function ($event) {
@@ -28421,7 +28453,7 @@ var render = function () {
                         return
                       }
                       _vm.$set(
-                        _vm.stateData.schedule.watering_weekdays_frequency,
+                        _vm.schedule.watering_weekdays_frequency,
                         index,
                         $event.target.value
                       )
@@ -28436,21 +28468,19 @@ var render = function () {
                     {
                       name: "model",
                       rawName: "v-model",
-                      value:
-                        _vm.stateData.schedule.watering_weekdays_time[index],
-                      expression:
-                        "stateData.schedule.watering_weekdays_time[index]",
+                      value: _vm.schedule.watering_weekdays_time[index],
+                      expression: "schedule.watering_weekdays_time[index]",
                     },
                   ],
                   staticClass: "form-control",
                   attrs: {
                     type: "text",
                     id: "watering_weekdays_time_" + index,
-                    disabled: !_vm.stateData.schedule.watering_weekdays[index],
+                    disabled: !_vm.schedule.watering_weekdays[index],
                     name: "watering_weekdays_time[" + index + "]",
                   },
                   domProps: {
-                    value: _vm.stateData.schedule.watering_weekdays_time[index],
+                    value: _vm.schedule.watering_weekdays_time[index],
                   },
                   on: {
                     input: function ($event) {
@@ -28458,7 +28488,7 @@ var render = function () {
                         return
                       }
                       _vm.$set(
-                        _vm.stateData.schedule.watering_weekdays_time,
+                        _vm.schedule.watering_weekdays_time,
                         index,
                         $event.target.value
                       )
@@ -28473,24 +28503,19 @@ var render = function () {
                     {
                       name: "model",
                       rawName: "v-model",
-                      value:
-                        _vm.stateData.schedule.watering_weekdays_duration[
-                          index
-                        ],
-                      expression:
-                        "stateData.schedule.watering_weekdays_duration[index]",
+                      value: _vm.schedule.watering_weekdays_duration[index],
+                      expression: "schedule.watering_weekdays_duration[index]",
                     },
                   ],
                   staticClass: "form-control",
                   attrs: {
                     type: "text",
                     id: "watering_weekdays_duration_" + index,
-                    disabled: !_vm.stateData.schedule.watering_weekdays[index],
+                    disabled: !_vm.schedule.watering_weekdays[index],
                     name: "watering_weekdays_duration[" + index + "]",
                   },
                   domProps: {
-                    value:
-                      _vm.stateData.schedule.watering_weekdays_duration[index],
+                    value: _vm.schedule.watering_weekdays_duration[index],
                   },
                   on: {
                     input: function ($event) {
@@ -28498,7 +28523,7 @@ var render = function () {
                         return
                       }
                       _vm.$set(
-                        _vm.stateData.schedule.watering_weekdays_duration,
+                        _vm.schedule.watering_weekdays_duration,
                         index,
                         $event.target.value
                       )
