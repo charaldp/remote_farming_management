@@ -1,6 +1,5 @@
 <?php
 
-use App\Models\SensorReading;
 use Illuminate\Database\Migrations\Migration;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Support\Facades\Schema;
@@ -14,12 +13,11 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('sensor_devices', function (Blueprint $table) {
-            $table->bigIncrements('id');
+        Schema::create('control_devices', function (Blueprint $table) {
+            $table->id();
             $table->unsignedBigInteger('user_id');
-            $table->unsignedBigInteger('control_device_id');
-            $table->enum('type', SensorReading::$measurement_types);
             $table->string('name', 32);
+            $table->boolean('is_on');
             $table->timestamps();
         });
     }
@@ -31,6 +29,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('sensor_devices');
+        Schema::dropIfExists('control_devices');
     }
 };

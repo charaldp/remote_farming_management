@@ -14,12 +14,12 @@ return new class extends Migration
      */
     public function up()
     {
-        Schema::create('sensor_devices', function (Blueprint $table) {
-            $table->bigIncrements('id');
-            $table->unsignedBigInteger('user_id');
-            $table->unsignedBigInteger('control_device_id');
-            $table->enum('type', SensorReading::$measurement_types);
-            $table->string('name', 32);
+        Schema::create('sensor_readings', function (Blueprint $table) {
+            $table->id();
+            $table->unsignedBigInteger('sensor_device_id');
+            $table->enum('measurement_type', SensorReading::$measurement_types);
+            $table->decimal('value', 8, 4);
+            $table->dateTime('measured_at', $precision = 0);
             $table->timestamps();
         });
     }
@@ -31,6 +31,6 @@ return new class extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('sensor_devices');
+        Schema::dropIfExists('sensor_readings');
     }
 };
