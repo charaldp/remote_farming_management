@@ -14,6 +14,18 @@ Vue.use(Vuex);
 
 import storeData from "./store/index.js"
 
+import Echo from "laravel-echo"
+
+window.Pusher = require('pusher-js');
+
+window.Echo = new Echo({
+    broadcaster: 'pusher',
+    key: 'websocketkey',
+    wsHost: window.location.hostname,
+    wsPort: 6001,
+    forceTLS: false,
+    disableStats: true,
+});
 /**
  * The following block of code may be used to automatically register your
  * Vue components. It will recursively scan this directory for the Vue

@@ -24,6 +24,8 @@
         "vue-template-compiler": "^2.6.12"
     },
     "dependencies": {
+        "laravel-echo": "^1.11.7",
+        "pusher-js": "^7.1.0-beta",
         "vue-object-merge": "^1.0.0",
         "vuex": "^3.5.1",
         "vuex-map-fields": "^1.4.1"
