@@ -17,13 +17,13 @@ class ScheduleController extends Controller
     public function create()
     {
         $schedule = new Schedule([
-            'watering_weekdays' => ['SU' => true],
-            'watering_weekdays_frequency' => ['SU' => 1],
-            'watering_weekdays_time' => ['SU' => 7200],
-            'watering_weekdays_duration' => ['SU' => 5400],
+            'watering_weekdays' => ['SUN' => true],
+            'watering_weekdays_frequency' => ['SUN' => 1],
+            'watering_weekdays_time' => ['SUN' => 7200],
+            'watering_weekdays_duration' => ['SUN' => 5400],
         ]);
         foreach (Schedule::$weekMap as $day => $dayname) {
-            if ($day != 'SU') {
+            if ($day != 'SUN') {
                 $schedule->setObjectAttribute('watering_weekdays', $day, false);
                 $schedule->setObjectAttribute('watering_weekdays_frequency', $day, '');
                 $schedule->setObjectAttribute('watering_weekdays_time', $day, '');

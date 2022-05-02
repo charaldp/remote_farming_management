@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use DateTime;
 use Illuminate\Database\Eloquent\Model;
 
 class Schedule extends BaseModel
@@ -24,14 +25,25 @@ class Schedule extends BaseModel
     ];
 
     public static $weekMap = [
-        'SU' => "SUNDAY",
-        'MO' => "MONDAY",
-        'TU' => "TUESDAY",
-        'WE' => "WEDNESDAY",
-        'TH' => "THURSDAY",
-        'FR' => "FRIDAY",
-        'SA' => "SATURDAY",
+        'SUN' => "SUNDAY",
+        'MON' => "MONDAY",
+        'TUE' => "TUESDAY",
+        'WED' => "WEDNESDAY",
+        'THU' => "THURSDAY",
+        'FRI' => "FRIDAY",
+        'SAT' => "SATURDAY",
     ];
+
+    public function getWeekdayTimeHour($key): int
+    {
+        return floor($this->watering_weekdays_time[$key] / 3600);
+    }
+
+    public function getWeekdayTimeMinute($key): int
+    {
+        return floor(($this->watering_weekdays_time[$key] % 3600) / 60);
+    }
+
 
     public function weekdays()
     {
