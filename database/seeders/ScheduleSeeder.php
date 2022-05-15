@@ -20,9 +20,9 @@ class ScheduleSeeder extends Seeder
             'user_id' => $user->id,
             'name' => 'Typical Schedule',
             'watering_weekdays' => json_encode(['MON' => true, 'THU' => true]),
-            'watering_weekdays_frequency' => json_encode(['MO' => 1, 'TH' => 1]),
-            'watering_weekdays_time' => json_encode(['MO' => 7200, 'TH' => 7200]), //2 A.M. Midnight
-            'watering_weekdays_duration' => json_encode(['MO' => 5400, 'TH' => 5400]),
+            'watering_weekdays_frequency' => json_encode(['MON' => 1, 'THU' => 1]),
+            'watering_weekdays_time' => json_encode(['MON' => 7200, 'THU' => 7200]), //2 A.M. Midnight
+            'watering_weekdays_duration' => json_encode(['MON' => 5400, 'THU' => 5400]),
         ]);
     }
 }

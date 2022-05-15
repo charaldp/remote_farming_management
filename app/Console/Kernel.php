@@ -3,6 +3,7 @@
 namespace App\Console;
 
 use Illuminate\Console\Scheduling\Schedule;
+use App\Models\Schedule as ScheduleTable;
 use Illuminate\Foundation\Console\Kernel as ConsoleKernel;
 use Illuminate\Support\Facades\DB;
 
@@ -19,23 +20,28 @@ class Kernel extends ConsoleKernel
         // $schedule->call(function () {
         //     DB::table('users');
         // })->cron('* * * * *');
-        $schedules = DB::table('schedules')->get();
+        $schedules = ScheduleTable::all();
         foreach ($schedules as $schedule_item) {
-            foreach ($schedule_item->watering_weekdays as $weekday_key => $is_enabled) {
+            foreach ($schedule_item->get_watering_weekdays() as $weekday_key => $is_enabled) {
                 if (!$is_enabled) {
                     continue;
                 }
-                $datetime = $schedule_item->getWeekdayTimeToTime($weekday_key);
-                $datetime->$schedule->call(function () {
-                        DB::table('sensor_control_devices');
-                    })->cron(
-                        '0 ' .
-                            $schedule_item->getWeekdayTimeMinute($weekday_key) . ' ' .
-                            $schedule_item->getWeekdayTimeHour($weekday_key) . ' ' .
-                            '* ' .
-                            '* ' .
-                            $weekday_key
-                    );
+                // $datetime = $schedule_item->getWeekdayTimeToTime($weekday_key);
+                // $datetime->
+                // dd($schedule_item->getWeekdayTimeMinute($weekday_key) . ' ' .
+                // $schedule_item->getWeekdayTimeHour($weekday_key) . ' ' .
+                // '? ' .
+                // '* ' .
+                // $weekday_key);
+                $schedule->call(function ($schedule_item) {
+                    dd($schedule_item->subscribed_devices);
+                })->cron(
+                    $schedule_item->getWeekdayTimeMinute($weekday_key) . ' ' .
+                    $schedule_item->getWeekdayTimeHour($weekday_key) . ' ' .
+                    '? ' .
+                    '* ' .
+                    $weekday_key
+                );
             }
         }
     }

@@ -3,8 +3,6 @@
 namespace App\Models;
 
 use DateTime;
-use Illuminate\Database\Eloquent\Model;
-
 class Schedule extends BaseModel
 {
     protected $table = 'schedules';
@@ -54,4 +52,18 @@ class Schedule extends BaseModel
     {
         return self::$weekMap[$key];
     }
+
+    public function subscribed_devices() {
+        return $this->hasMany(ControlDevice::class, 'id');
+    }
+
+    public function get_watering_weekdays() {
+        $watering_weekdays = [];
+        foreach ($this->watering_weekdays as $day => $is_enabled) {
+            if ($is_enabled)
+                $watering_weekdays[$day] = $is_enabled;
+        }
+        return $watering_weekdays;
+    }
+
 }
