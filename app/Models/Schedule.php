@@ -11,15 +11,28 @@ class Schedule extends BaseModel
         'name',
         'watering_weekdays',
         'watering_weekdays_frequency',
-        'watering_weekdays_time',
-        'watering_weekdays_duration',
+        'watering_weekdays_time_hours',
+        'watering_weekdays_time_minutes',
+        'watering_weekdays_duration_hours',
+        'watering_weekdays_duration_minutes',
     ];
 
     protected $casts = [
         'watering_weekdays' => 'array',
         'watering_weekdays_frequency' => 'array',
-        'watering_weekdays_time' => 'array',
-        'watering_weekdays_duration' => 'array',
+        'watering_weekdays_time_hours' => 'array',
+        'watering_weekdays_time_minutes' => 'array',
+        'watering_weekdays_duration_hours' => 'array',
+        'watering_weekdays_duration_minutes' => 'array',
+    ];
+
+    public static $schedule_example = [
+        'watering_weekdays' => ['SUN' => true],
+        'watering_weekdays_frequency' => ['SUN' => 1],
+        'watering_weekdays_time_hours' => ['SUN' => 2],
+        'watering_weekdays_time_minutes' => ['SUN' => 40],
+        'watering_weekdays_duration_hours' => ['SUN' => 1],
+        'watering_weekdays_duration_minutes' => ['SUN' => 30],
     ];
 
     public static $weekMap = [
@@ -64,6 +77,53 @@ class Schedule extends BaseModel
                 $watering_weekdays[$day] = $is_enabled;
         }
         return $watering_weekdays;
+    }
+
+    public function getStartCrons() {
+        $crons = [];
+        foreach($this->watering_weekdays as $weekday => $enabled) {
+            if ($enabled
+                && array_key_exists($weekday, $this->watering_weekdays_time_hours)
+                && array_key_exists($weekday, $this->watering_weekdays_time_minutes)
+                && array_key_exists($weekday, $this->watering_weekdays_duration_hours)
+                && array_key_exists($weekday, $this->watering_weekdays_duration_minutes)
+            ) {
+                $crons[$weekday] = (object)[
+                    'hour' => $this->watering_weekdays_time_hours[$weekday],
+                    'minute' => $this->watering_weekdays_time_minutes[$weekday],
+                    'weekday' => $weekday,
+                ];
+            }
+        }
+        return $crons;
+    }
+
+    public function getStopCrons() {
+        $crons = [];
+        foreach($this->watering_weekdays as $weekday => $enabled) {
+            if ($enabled
+                && array_key_exists($weekday, $this->watering_weekdays_time_hours)
+                && array_key_exists($weekday, $this->watering_weekdays_time_minutes)
+                && array_key_exists($weekday, $this->watering_weekdays_duration_hours)
+                && array_key_exists($weekday, $this->watering_weekdays_duration_minutes)
+            ) {
+                $datetime = new DateTime();
+                $datetime->setTime(
+                    $this->watering_weekdays_time_hours,
+                    $this->watering_weekdays_time_minutes,
+                    0,
+                    0,
+                    0
+                );
+                dd($datetime);
+                $crons[$weekday] = (object)[
+                    'hour' => $this->watering_weekdays_time_hours[$weekday],
+                    'minute' => $this->watering_weekdays_time_minutes[$weekday],
+                    'weekday' => $weekday,
+                ];
+            }
+        }
+        return $crons;
     }
 
 }

@@ -27,22 +27,17 @@
             <br/>
             <div class="card">
                 <div class="card-header">
-                    <h3><strong>{{__('messages.sensors')}}<strong></h3>
+                    <h3><strong>{{__('messages.control_devices')}}<strong></h3>
                 </div>
                 <div class="card-body">
-                    @foreach((Auth::user())->sensor_devices as $sensor_device)
+                    @foreach((Auth::user())->control_devices as $control_device)
                         <table>
-                            <th><b>{{$sensor_device->name}}</b></th>
+                            <th><a href="{{route('control_device.edit', $control_device->id)}}"><b>{{$control_device->name}}</b></a></th>
                             <tr>
-                            {{-- @foreach($schedule->weekdays() as $key => $weekday)
-                                <td>
-                                    {{$schedule->weekday($key)}}
-                                </td>
-                            @endforeach --}}
                             </tr>
                         </table>
                     @endforeach
-                    <a href="{{route('sensor.create')}}" class="btn btn-success">{{__('messages.add_sensor')}}<i class="fa fa-plus-square fa-fw"></i></a>
+                    <a href="{{route('control_device.create')}}" class="btn btn-success">{{__('messages.add_control_device')}}<i class="fa fa-plus-square fa-fw"></i></a>
                 </div>
             </div>
         </div>

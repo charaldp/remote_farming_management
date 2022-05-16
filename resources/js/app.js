@@ -39,6 +39,9 @@ window.Echo = new Echo({
 
 Vue.component('example-component', require('./components/ExampleComponent.vue').default);
 Vue.component('schedule', require('./components/Schedule.vue').default);
+Vue.component('control-device', require('./components/ControlDevice.vue').default);
+Vue.component('sensor-device', require('./components/SensorDevice.vue').default);
+
 
 /**
  * Next, we will create a fresh Vue application instance and attach it to

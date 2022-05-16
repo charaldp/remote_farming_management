@@ -22,25 +22,29 @@ class Kernel extends ConsoleKernel
         // })->cron('* * * * *');
         $schedules = ScheduleTable::all();
         foreach ($schedules as $schedule_item) {
-            foreach ($schedule_item->get_watering_weekdays() as $weekday_key => $is_enabled) {
-                if (!$is_enabled) {
-                    continue;
-                }
-                // $datetime = $schedule_item->getWeekdayTimeToTime($weekday_key);
-                // $datetime->
-                // dd($schedule_item->getWeekdayTimeMinute($weekday_key) . ' ' .
-                // $schedule_item->getWeekdayTimeHour($weekday_key) . ' ' .
-                // '? ' .
-                // '* ' .
-                // $weekday_key);
+            foreach ($schedule_item->getStartCrons() as $weekday_key => $cron) {
                 $schedule->call(function ($schedule_item) {
+                    // Start Control Device Action
                     dd($schedule_item->subscribed_devices);
                 })->cron(
-                    $schedule_item->getWeekdayTimeMinute($weekday_key) . ' ' .
-                    $schedule_item->getWeekdayTimeHour($weekday_key) . ' ' .
+                    $cron->hour . ' ' .
+                    $cron->minute . ' ' .
                     '? ' .
                     '* ' .
-                    $weekday_key
+                    $cron->weekday
+                );
+            }
+
+            foreach ($schedule_item->getStopCrons() as $weekday_key => $cron) {
+                $schedule->call(function ($schedule_item) {
+                    // Stop Control Device Action
+                    dd($schedule_item->subscribed_devices);
+                })->cron(
+                    $cron->hour . ' ' .
+                    $cron->minute . ' ' .
+                    '? ' .
+                    '* ' .
+                    $cron->weekday
                 );
             }
         }

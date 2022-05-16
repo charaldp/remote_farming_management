@@ -19,8 +19,10 @@ return new class extends Migration
             $table->string('name');
             $table->json('watering_weekdays');
             $table->json('watering_weekdays_frequency');
-            $table->json('watering_weekdays_time');
-            $table->json('watering_weekdays_duration');
+            $table->json('watering_weekdays_time_hours');
+            $table->json('watering_weekdays_time_minutes');
+            $table->json('watering_weekdays_duration_hours');
+            $table->json('watering_weekdays_duration_minutes');
             $table->timestamps();
         });
     }
