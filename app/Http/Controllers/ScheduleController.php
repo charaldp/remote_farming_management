@@ -57,6 +57,7 @@ class ScheduleController extends Controller
 
     public function edit(Schedule $schedule)
     {
+        $schedule->getStopCrons();
         return view('models.schedule.index')->with(['schedule' => $schedule]);
     }
 

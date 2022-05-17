@@ -27,8 +27,8 @@ class Kernel extends ConsoleKernel
                     // Start Control Device Action
                     dd($schedule_item->subscribed_devices);
                 })->cron(
-                    $cron->hour . ' ' .
                     $cron->minute . ' ' .
+                    $cron->hour . ' ' .
                     '? ' .
                     '* ' .
                     $cron->weekday
@@ -40,8 +40,8 @@ class Kernel extends ConsoleKernel
                     // Stop Control Device Action
                     dd($schedule_item->subscribed_devices);
                 })->cron(
-                    $cron->hour . ' ' .
                     $cron->minute . ' ' .
+                    $cron->hour . ' ' .
                     '? ' .
                     '* ' .
                     $cron->weekday

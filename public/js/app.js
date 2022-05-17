@@ -5430,6 +5430,12 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 /* harmony import */ var _baseMixin_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./baseMixin.js */ "./resources/js/components/baseMixin.js");
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = null != arguments[i] ? arguments[i] : {}; i % 2 ? ownKeys(Object(source), !0).forEach(function (key) { _defineProperty(target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
 //
 //
 //
@@ -5542,7 +5548,7 @@ __webpack_require__.r(__webpack_exports__);
   },
   computed: {
     submit_message: function submit_message() {
-      return !this.schedule.at_creation ? 'Edit' : 'Create';
+      return !this.schedule.at_creation ? 'Update' : 'Create';
     }
   },
   created: function created() {
@@ -5590,7 +5596,9 @@ __webpack_require__.r(__webpack_exports__);
       if (this.schedule.at_creation) {
         axios.post("/schedule/store", this.schedule).then(function (response) {
           this.$store.commit("schedule", {
-            schedule: response,
+            schedule: _objectSpread(_objectSpread({}, response.data), {}, {
+              at_creation: false
+            }),
             type: "schedule"
           });
         }.bind(this))["catch"](function (err) {
@@ -5599,7 +5607,7 @@ __webpack_require__.r(__webpack_exports__);
       } else {
         axios.patch("/schedule/".concat(this.schedule.id, "/update"), this.schedule).then(function (response) {
           this.$store.commit("schedule", {
-            schedule: response,
+            schedule: response.data,
             type: "schedule"
           });
         }.bind(this))["catch"](function (err) {

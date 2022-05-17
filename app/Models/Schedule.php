@@ -2,6 +2,7 @@
 
 namespace App\Models;
 
+use DateInterval;
 use DateTime;
 class Schedule extends BaseModel
 {
@@ -109,17 +110,29 @@ class Schedule extends BaseModel
             ) {
                 $datetime = new DateTime();
                 $datetime->setTime(
-                    $this->watering_weekdays_time_hours,
-                    $this->watering_weekdays_time_minutes,
-                    0,
+                    $this->watering_weekdays_time_hours[$weekday],
+                    $this->watering_weekdays_time_minutes[$weekday],
                     0,
                     0
                 );
-                dd($datetime);
+                $start_day = $datetime->format('d');
+                $timespan = $this->watering_weekdays_duration_hours[$weekday] * 3600 + $this->watering_weekdays_duration_minutes[$weekday] * 60;
+                $interval = new DateInterval('PT'.$timespan.'S');
+                $datetime_end = $datetime->add($interval);
+                $end_day = $datetime_end->format('d');
+                $end_hour = $datetime_end->format('h');
+                $end_minute = $datetime_end->format('m');
+                $weekdays = array_keys(self::$weekMap);
+                $index = array_search($weekday, $weekdays);
+                // dd($weekdays, array_keys($weekdays), $index);
+                $end_weekday = $start_day == $end_day
+                    ? $weekday
+                    : $weekdays[($index + 1) % 7];
+                // dd($interval, $datetime_end->format('h'), $start_day, $end_day, $weekday, $end_weekday);
                 $crons[$weekday] = (object)[
-                    'hour' => $this->watering_weekdays_time_hours[$weekday],
-                    'minute' => $this->watering_weekdays_time_minutes[$weekday],
-                    'weekday' => $weekday,
+                    'hour' => $end_hour,
+                    'minute' => $end_minute,
+                    'weekday' => $end_weekday,
                 ];
             }
         }

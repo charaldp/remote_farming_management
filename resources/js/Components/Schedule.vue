@@ -113,7 +113,7 @@ export default {
     },
     computed: {
         submit_message() {
-            return !this.schedule.at_creation ? 'Edit': 'Create';
+            return !this.schedule.at_creation ? 'Update': 'Create';
         },
     },
     created() {
@@ -154,7 +154,7 @@ export default {
                 .then(
                 function (response) {
                     this.$store.commit("schedule", {
-                    schedule: response,
+                    schedule: {...response.data, at_creation: false},
                     type: "schedule",
                     });
                 }.bind(this)
@@ -166,7 +166,7 @@ export default {
                 .then(
                 function (response) {
                     this.$store.commit("schedule", {
-                    schedule: response,
+                    schedule: response.data,
                     type: "schedule",
                     });
                 }.bind(this)
