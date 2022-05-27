@@ -5,6 +5,7 @@ use Illuminate\Support\Facades\Route;
 use App\Http\Controllers\HomeController;
 use App\Http\Controllers\ScheduleController;
 use App\Http\Controllers\SensorDeviceController;
+use App\Http\Controllers\WateringEntryController;
 
 /*
 |--------------------------------------------------------------------------
@@ -38,3 +39,6 @@ Route::get('/control_device/{control_device}/edit', [ControlDeviceController::cl
 
 Route::get('/control_device/{control_device}/sensor_device/create', [SensorDeviceController::class, 'create'])->name('sensor_device.create');
 Route::get('/control_device/{control_device}/sensor_device/{sensor_device}/edit', [SensorDeviceController::class, 'edit'])->name('sensor_device.edit');
+
+Route::get('/control_device/{control_device}/sensor_device/{sensor_device}/watering_entry', [WateringEntryController::class, 'store'])->name('watering_entry.store');
+

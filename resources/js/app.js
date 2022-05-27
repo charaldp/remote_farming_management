@@ -37,10 +37,10 @@ window.Echo = new Echo({
 // const files = require.context('./', true, /\.vue$/i)
 // files.keys().map(key => Vue.component(key.split('/').pop().split('.')[0], files(key).default))
 
-Vue.component('example-component', require('./components/ExampleComponent.vue').default);
-Vue.component('schedule', require('./components/Schedule.vue').default);
-Vue.component('control-device', require('./components/ControlDevice.vue').default);
-Vue.component('sensor-device', require('./components/SensorDevice.vue').default);
+Vue.component('example-component', require('./Components/ExampleComponent.vue').default);
+Vue.component('schedule', require('./Components/Schedule.vue').default);
+Vue.component('control-device', require('./Components/ControlDevice.vue').default);
+Vue.component('sensor-device', require('./Components/SensorDevice.vue').default);
 
 
 /**

@@ -18,6 +18,7 @@ class DatabaseSeeder extends Seeder
         $this->call(ScheduleSeeder::class);
         $this->call(ControlDeviceSeeder::class);
         $this->call(SensorDeviceSeeder::class);
+        $this->call(WateringEntrySeeder::class);
         // \App\Models\User::factory(10)->create();
     }
 }
