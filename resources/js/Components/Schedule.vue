@@ -116,8 +116,8 @@ export default {
     },
     created() {
         this.$store.commit("schedule", {
-        schedule: this.schedule_in,
-        type: "schedule",
+            schedule: this.schedule_in,
+            type: "schedule",
         });
     },
     mounted() {
@@ -176,15 +176,21 @@ export default {
             var schedule = {
                 watering_weekdays: {},
                 watering_weekdays_frequency: {},
-                watering_weekdays_time: {},
-                watering_weekdays_duration: {},
+                watering_weekdays_time_hours: {},
+                watering_weekdays_time_minutes: {},
+                watering_weekdays_duration_hours: {},
+                watering_weekdays_duration_minutes: {},
             };
             schedule.watering_weekdays[index] = event.target.checked;
             if (schedule.watering_weekdays[index]) {
+                schedule.watering_weekdays_frequency[index] = 1;
+            } else {
                 schedule.watering_weekdays_frequency[index] = "";
-                schedule.watering_weekdays_time[index] = "";
-                schedule.watering_weekdays_duration[index] = "";
             }
+            schedule.watering_weekdays_time_hours[index] = "";
+            schedule.watering_weekdays_time_minutes[index] = "";
+            schedule.watering_weekdays_duration_hours[index] = "";
+            schedule.watering_weekdays_duration_minutes[index] = "";
             this.$store.commit("MERGE", {
                 changes: {
                 schedule: schedule,

@@ -9,7 +9,6 @@
                 <div class="card-body">
                     <div class="portlet">
                         <div class="portlet-header">
-                            <div class="caption">{{__('Name')}}</div>
                         </div>
                         <div class="portlet-body">
                             <schedule

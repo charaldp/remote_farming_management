@@ -36,9 +36,12 @@ Route::patch('/schedule/{schedule}/update', [ScheduleController::class, 'update'
 
 Route::get('/control_device/create', [ControlDeviceController::class, 'create'])->name('control_device.create');
 Route::get('/control_device/{control_device}/edit', [ControlDeviceController::class, 'edit'])->name('control_device.edit');
+Route::patch('/control_device/{control_device}/update', [ControlDeviceController::class, 'update'])->name('control_device.update');
 
 Route::get('/control_device/{control_device}/sensor_device/create', [SensorDeviceController::class, 'create'])->name('sensor_device.create');
+Route::post('/control_device/{control_device}/sensor_device/store', [SensorDeviceController::class, 'store'])->name('sensor_device.store');
 Route::get('/control_device/{control_device}/sensor_device/{sensor_device}/edit', [SensorDeviceController::class, 'edit'])->name('sensor_device.edit');
+Route::patch('/control_device/{control_device}/sensor_device/{sensor_device}/update', [SensorDeviceController::class, 'update'])->name('sensor_device.update');
 
 Route::get('/control_device/{control_device}/sensor_device/{sensor_device}/watering_entry', [WateringEntryController::class, 'store'])->name('watering_entry.store');
 

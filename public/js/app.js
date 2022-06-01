@@ -5369,16 +5369,75 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 /* harmony import */ var _baseMixin_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./baseMixin.js */ "./resources/js/Components/baseMixin.js");
+/* harmony import */ var vuex_map_fields__WEBPACK_IMPORTED_MODULE_1__ = __webpack_require__(/*! vuex-map-fields */ "./node_modules/vuex-map-fields/dist/index.esm.js");
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = null != arguments[i] ? arguments[i] : {}; i % 2 ? ownKeys(Object(source), !0).forEach(function (key) { _defineProperty(target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+//
+//
 //
 //
 //
 //
 
+
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   name: "control-device",
   mixins: [_baseMixin_js__WEBPACK_IMPORTED_MODULE_0__["default"]],
   props: ['control_device_in'],
-  methods: {}
+  computed: _objectSpread({
+    button_class: function button_class() {
+      return this.is_on ? 'btn btn-danger' : 'btn btn-success';
+    },
+    button_message: function button_message() {
+      return this.is_on ? 'Turn Off' : 'Turn On';
+    }
+  }, (0,vuex_map_fields__WEBPACK_IMPORTED_MODULE_1__.mapFields)(['control_device.is_on'])),
+  created: function created() {
+    this.$store.commit("control_device", {
+      control_device: this.control_device_in,
+      type: "control_device"
+    });
+  },
+  methods: {
+    changeIsOnState: function changeIsOnState() {
+      this.editCreateControlDevice(!this.control_device.is_on);
+    },
+    editCreateControlDevice: function editCreateControlDevice() {
+      var patch_is_on = arguments.length > 0 && arguments[0] !== undefined ? arguments[0] : null;
+
+      if (this.control_device.at_creation) {
+        axios.post("/control_device/store", this.control_device).then(function (response) {
+          this.$store.commit("control_device", {
+            control_device: _objectSpread(_objectSpread({}, response.data), {}, {
+              at_creation: false
+            }),
+            type: "control_device"
+          });
+        }.bind(this))["catch"](function (err) {
+          return console.log(err);
+        });
+      } else {
+        var sent_data = JSON.parse(JSON.stringify(this.control_device));
+
+        if (patch_is_on !== null) {
+          sent_data.is_on = patch_is_on;
+        }
+
+        axios.patch("/control_device/".concat(this.control_device.id, "/update"), sent_data).then(function (response) {
+          this.$store.commit("control_device", {
+            control_device: response.data,
+            type: "control_device"
+          });
+        }.bind(this))["catch"](function (err) {
+          return console.log(err);
+        });
+      }
+    }
+  }
 });
 
 /***/ }),
@@ -5617,17 +5676,23 @@ function _defineProperty(obj, key, value) { if (key in obj) { Object.definePrope
       var schedule = {
         watering_weekdays: {},
         watering_weekdays_frequency: {},
-        watering_weekdays_time: {},
-        watering_weekdays_duration: {}
+        watering_weekdays_time_hours: {},
+        watering_weekdays_time_minutes: {},
+        watering_weekdays_duration_hours: {},
+        watering_weekdays_duration_minutes: {}
       };
       schedule.watering_weekdays[index] = event.target.checked;
 
       if (schedule.watering_weekdays[index]) {
+        schedule.watering_weekdays_frequency[index] = 1;
+      } else {
         schedule.watering_weekdays_frequency[index] = "";
-        schedule.watering_weekdays_time[index] = "";
-        schedule.watering_weekdays_duration[index] = "";
       }
 
+      schedule.watering_weekdays_time_hours[index] = "";
+      schedule.watering_weekdays_time_minutes[index] = "";
+      schedule.watering_weekdays_duration_hours[index] = "";
+      schedule.watering_weekdays_duration_minutes[index] = "";
       this.$store.commit("MERGE", {
         changes: {
           schedule: schedule
@@ -5653,6 +5718,36 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony export */   "default": () => (__WEBPACK_DEFAULT_EXPORT__)
 /* harmony export */ });
 /* harmony import */ var _baseMixin_js__WEBPACK_IMPORTED_MODULE_0__ = __webpack_require__(/*! ./baseMixin.js */ "./resources/js/Components/baseMixin.js");
+function ownKeys(object, enumerableOnly) { var keys = Object.keys(object); if (Object.getOwnPropertySymbols) { var symbols = Object.getOwnPropertySymbols(object); enumerableOnly && (symbols = symbols.filter(function (sym) { return Object.getOwnPropertyDescriptor(object, sym).enumerable; })), keys.push.apply(keys, symbols); } return keys; }
+
+function _objectSpread(target) { for (var i = 1; i < arguments.length; i++) { var source = null != arguments[i] ? arguments[i] : {}; i % 2 ? ownKeys(Object(source), !0).forEach(function (key) { _defineProperty(target, key, source[key]); }) : Object.getOwnPropertyDescriptors ? Object.defineProperties(target, Object.getOwnPropertyDescriptors(source)) : ownKeys(Object(source)).forEach(function (key) { Object.defineProperty(target, key, Object.getOwnPropertyDescriptor(source, key)); }); } return target; }
+
+function _defineProperty(obj, key, value) { if (key in obj) { Object.defineProperty(obj, key, { value: value, enumerable: true, configurable: true, writable: true }); } else { obj[key] = value; } return obj; }
+
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
+//
 //
 //
 //
@@ -5661,8 +5756,43 @@ __webpack_require__.r(__webpack_exports__);
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   name: "sensor-device",
   mixins: [_baseMixin_js__WEBPACK_IMPORTED_MODULE_0__["default"]],
-  props: ['sensor_device_in'],
-  methods: {}
+  props: ['sensor_device_in', 'sensor_reader_types'],
+  computed: {
+    submit_message: function submit_message() {
+      return !this.sensor_device.at_creation ? 'Update' : 'Create';
+    }
+  },
+  created: function created() {
+    this.$store.commit("sensor_device", {
+      sensor_device: this.sensor_device_in,
+      type: "sensor_device"
+    });
+  },
+  methods: {
+    editCreateSensorDevice: function editCreateSensorDevice() {
+      if (this.sensor_device.at_creation) {
+        axios.post("/control_device/".concat(this.sensor_device.control_device_id, "/sensor_device/store"), this.schedule).then(function (response) {
+          this.$store.commit("sensor_device", {
+            sensor_device: _objectSpread(_objectSpread({}, response.data), {}, {
+              at_creation: false
+            }),
+            type: "sensor_device"
+          });
+        }.bind(this))["catch"](function (err) {
+          return console.log(err);
+        });
+      } else {
+        axios.patch("/control_device/".concat(this.sensor_device.control_device_id, "/sensor_device/").concat(this.sensor_device.id, "/update"), this.sensor_device).then(function (response) {
+          this.$store.commit("sensor_device", {
+            sensor_device: response.data,
+            type: "sensor_device"
+          });
+        }.bind(this))["catch"](function (err) {
+          return console.log(err);
+        });
+      }
+    }
+  }
 });
 
 /***/ }),
@@ -5810,18 +5940,32 @@ __webpack_require__.r(__webpack_exports__);
 
 /* harmony default export */ const __WEBPACK_DEFAULT_EXPORT__ = ({
   state: {
-    schedule: {}
+    schedule: {},
+    control_device: {},
+    sensor_device: {}
   },
   getters: {
     getField: vuex_map_fields__WEBPACK_IMPORTED_MODULE_0__.getField,
     getSchedule: function getSchedule(state) {
       return state.schedule;
+    },
+    getControlDevice: function getControlDevice(state) {
+      return state.control_device;
+    },
+    getSensorDevice: function getSensorDevice(state) {
+      return state.sensor_device;
     }
   },
   mutations: {
     updateField: vuex_map_fields__WEBPACK_IMPORTED_MODULE_0__.updateField,
     schedule: function schedule(state, payload) {
       return state.schedule = Object.assign({}, state.schedule, payload.schedule);
+    },
+    control_device: function control_device(state, payload) {
+      return state.control_device = Object.assign({}, state.control_device, payload.control_device);
+    },
+    sensor_device: function sensor_device(state, payload) {
+      return state.sensor_device = Object.assign({}, state.sensor_device, payload.sensor_device);
     },
     MERGE: function MERGE(state, value) {
       (0,vue_object_merge__WEBPACK_IMPORTED_MODULE_1__.stateMerge)(state, value.changes, null, value.ignoreNull);
@@ -34986,7 +35130,13 @@ var render = function () {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("div")
+  return _c("div", [
+    _c("a", {
+      class: _vm.button_class,
+      domProps: { innerHTML: _vm._s(_vm.button_message) },
+      on: { click: _vm.changeIsOnState },
+    }),
+  ])
 }
 var staticRenderFns = []
 render._withStripped = true
@@ -35436,7 +35586,118 @@ var render = function () {
   var _vm = this
   var _h = _vm.$createElement
   var _c = _vm._self._c || _h
-  return _c("div")
+  return _c("div", [
+    _c("div", { staticClass: "form-group col-md-12" }, [
+      _c(
+        "label",
+        {
+          staticClass: "col-md-6 control-label",
+          attrs: { for: "sensor_device" },
+        },
+        [_vm._v(_vm._s("Sensor Device Name"))]
+      ),
+      _vm._v(" "),
+      _c("div", { staticClass: "col-md-4" }, [
+        _c("input", {
+          directives: [
+            {
+              name: "model",
+              rawName: "v-model",
+              value: _vm.sensor_device.name,
+              expression: "sensor_device.name",
+            },
+          ],
+          staticClass: "form-control",
+          attrs: { type: "text", name: "name", id: "sensor_device_name" },
+          domProps: { value: _vm.sensor_device.name },
+          on: {
+            input: function ($event) {
+              if ($event.target.composing) {
+                return
+              }
+              _vm.$set(_vm.sensor_device, "name", $event.target.value)
+            },
+          },
+        }),
+      ]),
+    ]),
+    _vm._v(" "),
+    _c(
+      "div",
+      { staticClass: "form-group col-md-12" },
+      [
+        _c(
+          "label",
+          {
+            staticClass: "col-md-12 control-label",
+            attrs: { for: "sensor_device" },
+          },
+          [_vm._v(_vm._s("Sensor Reader Type"))]
+        ),
+        _vm._v(" "),
+        _vm._l(this.sensor_reader_types, function (sensor_reader_type) {
+          return _c(
+            "label",
+            {
+              key: sensor_reader_type + "_key",
+              staticClass: "col-md-12 radio",
+              attrs: { for: sensor_reader_type + "_id" },
+            },
+            [
+              _c("input", {
+                directives: [
+                  {
+                    name: "model",
+                    rawName: "v-model",
+                    value: _vm.sensor_device.type,
+                    expression: "sensor_device.type",
+                  },
+                ],
+                staticClass: "uniform",
+                attrs: {
+                  type: "radio",
+                  name: "bellow_forming",
+                  id: sensor_reader_type + "_id",
+                },
+                domProps: {
+                  value: sensor_reader_type,
+                  checked: _vm._q(_vm.sensor_device.type, sensor_reader_type),
+                },
+                on: {
+                  change: function ($event) {
+                    return _vm.$set(
+                      _vm.sensor_device,
+                      "type",
+                      sensor_reader_type
+                    )
+                  },
+                },
+              }),
+              _vm._v(
+                "\n             " + _vm._s(sensor_reader_type) + "\n        "
+              ),
+            ]
+          )
+        }),
+      ],
+      2
+    ),
+    _vm._v(" "),
+    _c("div", [
+      _c(
+        "button",
+        {
+          attrs: { type: "submit" },
+          on: {
+            click: function ($event) {
+              return _vm.editCreateSensorDevice()
+            },
+          },
+        },
+        [_vm._v(_vm._s(_vm.submit_message))]
+      ),
+    ]),
+  ])
 }
 var staticRenderFns = []
 render._withStripped = true

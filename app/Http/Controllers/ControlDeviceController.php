@@ -13,7 +13,24 @@ class ControlDeviceController extends Controller
         return view('models.control_device.index')->with(['control_device' => $control_device]);
     }
 
+    public function store(Request $request) {
+
+    }
+
     public function edit(ControlDevice $control_device) {
         return view('models.control_device.index')->with(['control_device' => $control_device]);
+    }
+
+    public function update(ControlDevice $control_device, Request $request) {
+        if ($request->user() == null) {
+            return redirect('schedule.create');
+        }
+        $validated = $request->validate([
+            'is_on' => 'required|boolean',
+            'name' => 'required|max:255',
+        ]);
+        $control_device->fill($validated);
+        $control_device->update();
+        return $control_device;
     }
 }

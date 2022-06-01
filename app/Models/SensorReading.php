@@ -19,6 +19,7 @@ class SensorReading extends Model
 
     public static $measurement_types = [
         'pressure',
+        'temperature',
     ];
 
     public function sensor_device() {
