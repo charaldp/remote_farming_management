@@ -24,6 +24,9 @@ class SensorReading extends Model
 
     public function sensor_device() {
         $this->belongsTo(SensorDevice::class);
+    }
 
+    public function watering_entry() {
+        $this->belongsTo(WateringEntry::class);
     }
 }

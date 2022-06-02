@@ -1,6 +1,7 @@
 <template>
     <div>
         <a :class="button_class" @click="changeIsOnState" v-html="button_message"></a>
+        <watering-entry></watering-entry>
     </div>
 </template>
 

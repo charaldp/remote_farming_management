@@ -17,6 +17,7 @@ return new class extends Migration
         Schema::create('sensor_readings', function (Blueprint $table) {
             $table->id();
             $table->unsignedBigInteger('sensor_device_id');
+            $table->unsignedBigInteger('watering_entry_id');
             $table->enum('measurement_type', SensorReading::$measurement_types);
             $table->decimal('value', 8, 4);
             $table->dateTime('measured_at', $precision = 0);

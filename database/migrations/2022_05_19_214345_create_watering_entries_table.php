@@ -15,6 +15,7 @@ return new class extends Migration
     {
         Schema::create('watering_entries', function (Blueprint $table) {
             $table->id();
+            $table->unsignedBigInteger('control_device_id');
             $table->timestamps();
         });
     }

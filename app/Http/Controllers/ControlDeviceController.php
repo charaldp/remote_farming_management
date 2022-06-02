@@ -7,6 +7,12 @@ use Illuminate\Http\Request;
 
 class ControlDeviceController extends Controller
 {
+    public function __construct()
+    {
+        $this->middleware('auth');
+
+    }
+
     public function create() {
         $control_device = new ControlDevice([]);
         $control_device->at_creation = true;
@@ -19,6 +25,10 @@ class ControlDeviceController extends Controller
 
     public function edit(ControlDevice $control_device) {
         return view('models.control_device.index')->with(['control_device' => $control_device]);
+    }
+
+    public function show(ControlDevice $control_device) {
+        return $control_device;
     }
 
     public function update(ControlDevice $control_device, Request $request) {

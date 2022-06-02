@@ -41,6 +41,8 @@ Vue.component('example-component', require('./Components/ExampleComponent.vue').
 Vue.component('schedule', require('./Components/Schedule.vue').default);
 Vue.component('control-device', require('./Components/ControlDevice.vue').default);
 Vue.component('sensor-device', require('./Components/SensorDevice.vue').default);
+Vue.component('watering-entry', require('./Components/WateringEntry.vue').default);
+
 
 
 /**
