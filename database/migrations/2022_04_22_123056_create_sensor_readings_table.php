@@ -20,7 +20,6 @@ return new class extends Migration
             $table->unsignedBigInteger('watering_entry_id');
             $table->enum('measurement_type', SensorReading::$measurement_types);
             $table->decimal('value', 8, 4);
-            $table->dateTime('measured_at', $precision = 0);
             $table->timestamps();
         });
     }

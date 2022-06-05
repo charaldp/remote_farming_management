@@ -48,7 +48,3 @@ Route::patch('/control_device/{control_device}/sensor_device/{sensor_device}/upd
 Route::post('/control_device/{control_device}/watering_entry/store', [WateringEntryController::class, 'store'])->name('watering_entry.store');
 Route::get('/control_device/{control_device}/watering_entry/{watering_entry}/edit', [WateringEntryController::class, 'store'])->name('watering_entry.store');
 Route::get('/control_device/{control_device}/watering_entry/{watering_entry}/sensor_device/{sensor_device}/sensor_reading', [WateringEntryController::class, 'sensor_reading'])->name('watering_entry.store');
-
-Route::get('/control_device/{control_device}/watering_entry/{watering_entry}/sensor_device/{sensor_device}/sensor_reading/store', [SensorReadingController::class, 'store'])->name('watering_entry.store');
-
-

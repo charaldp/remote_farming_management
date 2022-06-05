@@ -9,4 +9,8 @@ class WateringEntry extends Model
 {
     use HasFactory;
     protected $table = 'watering_entries';
+
+    public function sensor_readings() {
+        $this->hasMany(SensorReading::class);
+    }
 }

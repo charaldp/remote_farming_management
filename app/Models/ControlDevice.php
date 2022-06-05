@@ -23,4 +23,8 @@ class ControlDevice extends Model
     public function sensor_devices() {
         return $this->hasMany(SensorDevice::class);
     }
+
+    public function watering_entries() {
+        return $this->hasMany(WateringEntry::class);
+    }
 }

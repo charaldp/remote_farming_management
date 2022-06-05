@@ -5,13 +5,14 @@
     <div class="row justify-content-center">
         <div class="col-md-8">
             <div class="card">
-                <div class="card-header">{{$control_device->at_creation?__('New Schedule'):__('Edit Schedule')}}</div>
+                <div class="card-header">{{$control_device->at_creation?__('New Control Device'):__('Edit Control Device')}}</div>
                 <div class="card-body">
                     <div class="portlet">
                         <div class="portlet-header">
                             <div class="caption">{{__('Name')}}</div>
                         </div>
                         <div class="portlet-body">
+                            @csrf
                             <control-device
                                 :control_device_in="{{$control_device}}"
                             >

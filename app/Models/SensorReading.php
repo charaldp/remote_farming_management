@@ -9,7 +9,7 @@ class SensorReading extends Model
 {
     use HasFactory;
 
-    protected $table = 'sensor_reading';
+    protected $table = 'sensor_readings';
 
     protected $fillable = [
         'measurement_type',
