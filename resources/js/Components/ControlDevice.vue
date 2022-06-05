@@ -1,7 +1,11 @@
 <template>
     <div>
+        <div class="caption"><b>{{control_device.name}}</b></div>
+        </br>
         <a :class="button_class" @click="changeIsOnState" v-html="button_message"></a>
-        <watering-entry></watering-entry>
+        <watering-entry v-for="sensor_device_id in this.sensor_device_ids" :key="sensor_device_id"
+            :sensor_device_id="sensor_device_id"
+        ></watering-entry>
     </div>
 </template>
 
@@ -13,7 +17,8 @@ export default {
     name: "control-device",
     mixins: [baseMixin],
     props: [
-        'control_device_in'
+        'control_device_in',
+        'sensor_device_ids',
     ],
     computed: {
         button_class() {

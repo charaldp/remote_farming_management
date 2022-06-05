@@ -26,7 +26,16 @@ class ControlDeviceController extends Controller
     }
 
     public function edit(ControlDevice $control_device) {
-        return view('models.control_device.index')->with(['control_device' => $control_device]);
+        $watering_entry = $control_device->watering_entries->last();
+        unset($control_device->watering_entries);
+        if ($watering_entry) {
+            $control_device->watering_entry_id = $watering_entry->id;
+        } else {
+            $control_device->watering_entry_id = 0;
+        }
+        $sensor_device_ids = $control_device->sensor_devices->pluck('id')->toArray();
+        unset($control_device->sensor_devices);
+        return view('models.control_device.index')->with(['control_device' => $control_device, 'sensor_device_ids' => $sensor_device_ids]);
     }
 
     public function show(ControlDevice $control_device) {

@@ -4,6 +4,6 @@ import { mapFields } from "vuex-map-fields";
 
 export default {
     computed: {
-        ...mapState(["schedule", "control_device", "sensor_device"]),
+        ...mapState(["state_data", "schedule", "control_device", "sensor_device"]),
     }
 }

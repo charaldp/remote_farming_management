@@ -6,10 +6,14 @@ export default {
         schedule: {},
         control_device: {},
         sensor_device: {},
+        state_data: {},
     },
 
     getters: {
         getField,
+        getStateData(state) {
+            return state.state_data
+        },
         getSchedule(state) {
             return state.schedule
         },
@@ -22,6 +26,9 @@ export default {
     },
     mutations: {
         updateField,
+        state_data(state, payload) {
+            return state.state_data = Object.assign({}, state.state_data, payload.state_data)
+        },
         schedule(state, payload) {
             return state.schedule = Object.assign({}, state.schedule, payload.schedule)
         },

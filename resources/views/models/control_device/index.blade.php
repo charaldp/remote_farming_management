@@ -9,12 +9,13 @@
                 <div class="card-body">
                     <div class="portlet">
                         <div class="portlet-header">
-                            <div class="caption">{{__('Name')}}</div>
                         </div>
                         <div class="portlet-body">
                             @csrf
                             <control-device
                                 :control_device_in="{{$control_device}}"
+                                :sensor_device_ids="{{json_encode($sensor_device_ids)}}"
+
                             >
                             </control-device>
                         </div>
