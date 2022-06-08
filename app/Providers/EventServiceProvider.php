@@ -4,6 +4,7 @@ namespace App\Providers;
 
 use App\Events\ControlDeviceSwitchedIsOnStatus;
 use App\Listeners\CreateWateringEntry;
+use App\Listeners\SetupControlDeviceTurningOff;
 use Illuminate\Auth\Events\Registered;
 use Illuminate\Auth\Listeners\SendEmailVerificationNotification;
 use Illuminate\Foundation\Support\Providers\EventServiceProvider as ServiceProvider;
@@ -22,6 +23,7 @@ class EventServiceProvider extends ServiceProvider
         ],
         ControlDeviceSwitchedIsOnStatus::class => [
             CreateWateringEntry::class,
+            SetupControlDeviceTurningOff::class,
         ],
     ];
 
