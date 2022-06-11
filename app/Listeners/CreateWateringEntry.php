@@ -3,6 +3,7 @@
 namespace App\Listeners;
 
 use App\Events\ControlDeviceSwitchedIsOnStatus;
+use App\Events\WateringEntryAdded;
 use App\Models\WateringEntry;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
@@ -31,5 +32,6 @@ class CreateWateringEntry
         ]);
         $watering_entry->control_device_id = $event->control_device->id;
         $watering_entry->save();
+        WateringEntryAdded::dispatch($watering_entry->id);
     }
 }

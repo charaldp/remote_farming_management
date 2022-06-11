@@ -3,6 +3,7 @@
 namespace App\Providers;
 
 use App\Events\ControlDeviceSwitchedIsOnStatus;
+use App\Events\WateringEntryAdded;
 use App\Listeners\CreateWateringEntry;
 use App\Listeners\SetupControlDeviceTurningOff;
 use Illuminate\Auth\Events\Registered;
@@ -23,8 +24,10 @@ class EventServiceProvider extends ServiceProvider
         ],
         ControlDeviceSwitchedIsOnStatus::class => [
             CreateWateringEntry::class,
-            SetupControlDeviceTurningOff::class,
         ],
+        WateringEntryAdded::class => [
+            SetupControlDeviceTurningOff::class,
+        ]
     ];
 
     /**

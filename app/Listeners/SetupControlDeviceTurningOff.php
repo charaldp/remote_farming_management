@@ -2,7 +2,8 @@
 
 namespace App\Listeners;
 
-use App\Events\ControlDeviceSwitchedIsOnStatus;
+use App\Events\WateringEntryAdded;
+use App\Models\WateringEntry;
 use Illuminate\Contracts\Queue\ShouldQueue;
 use Illuminate\Queue\InteractsWithQueue;
 
@@ -21,14 +22,16 @@ class SetupControlDeviceTurningOff implements ShouldQueue
     /**
      * Handle the event.
      *
-     * @param  \App\Events\ControlDeviceSwitchedIsOnStatus  $event
+     * @param  \App\Events\WateringEntryAdded  $event
      * @return void
      */
-    public function handle(ControlDeviceSwitchedIsOnStatus $event)
+    public function handle(WateringEntryAdded $event)
     {
-        // $this->delay = $event->...;
-        $event->control_device->is_on = false;
-        $event->control_device->update();
+        $control_device = WateringEntry::find($event->watering_entry_id)->control_device;
+        if ($event->watering_entry_id == $control_device->watering_entries->last()->id) {
+            $control_device->is_on = false;
+            $control_device->update();
+        }
     }
 
     public $delay = 7200;
