@@ -38,8 +38,19 @@ class ControlDeviceController extends Controller
             $control_device->watering_entry_id = 0;
         }
         $sensor_device_ids = $control_device->sensor_devices->pluck('id')->toArray();
+        $watering_entries = $control_device->watering_entries->map(function ($watering_entry) {
+            return [
+                'id' => $watering_entry->id,
+                'created_at' => $watering_entry->created_at->format('Y-m-d H:i:s'),
+            ];
+        });
+        // dd($watering_entries);
         unset($control_device->sensor_devices);
-        return view('models.control_device.index')->with(['control_device' => $control_device, 'sensor_device_ids' => $sensor_device_ids]);
+        return view('models.control_device.index')->with([
+            'control_device' => $control_device,
+            'sensor_device_ids' => $sensor_device_ids,
+            'watering_entries' => $watering_entries
+        ]);
     }
 
     public function show(ControlDevice $control_device) {

@@ -15,7 +15,7 @@
                             <control-device
                                 :control_device_in="{{$control_device}}"
                                 :sensor_device_ids="{{json_encode($sensor_device_ids)}}"
-
+                                :watering_entries="{{json_encode($watering_entries)}}"
                             >
                             </control-device>
                         </div>

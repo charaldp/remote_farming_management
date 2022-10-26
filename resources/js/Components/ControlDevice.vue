@@ -3,9 +3,14 @@
         <div class="caption"><b>{{control_device.name}}</b></div>
         </br>
         <a :class="button_class" @click="changeIsOnState" v-html="button_message"></a>
-        <watering-entry v-for="sensor_device_id in this.sensor_device_ids" :key="sensor_device_id"
-            :sensor_device_id="sensor_device_id"
-        ></watering-entry>
+        <template v-for="sensor_device_id in this.sensor_device_ids">
+            <watering-entry v-for="watering_entry in watering_entries.reverse()"
+                :key="sensor_device_id+''+watering_entry.id"
+                :sensor_device_id="sensor_device_id"
+                :watering_entry_created_at="watering_entry.created_at"
+                :watering_entry_id="watering_entry.id"
+            ></watering-entry>
+        </template>
     </div>
 </template>
 
@@ -19,6 +24,7 @@ export default {
     props: [
         'control_device_in',
         'sensor_device_ids',
+        'watering_entries',
     ],
     computed: {
         button_class() {

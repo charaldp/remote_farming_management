@@ -1,6 +1,16 @@
 <template>
-    <line-chart ref="readings_chart" :chart-data="line_chart_data.pressure_data" :options="options_watering_entry" :width="700" :height="500">
-    </line-chart>
+    <div class="card">
+        <div class="card-header" @click="openChart"><b>{{watering_entry_created_at}}</b></div>
+        <div class="card-body" v-show="opened">
+            <line-chart
+                ref="readings_chart"
+                :chart-data="line_chart_data.pressure_data"
+                :options="options_watering_entry"
+                :width="700"
+                :height="500">
+            </line-chart>
+        </div>
+    </div>
 </template>
 
 <script>
@@ -13,10 +23,13 @@ export default {
         LineChart
     },
     props: [
-        'sensor_device_id'
+        'sensor_device_id',
+        'watering_entry_created_at',
+        'watering_entry_id',
     ],
     data() {
         return {
+            sensor_readings_data: {},
             line_chart_data: {pressure_data: {}},
             options_watering_entry: {
                 title: {
@@ -30,19 +43,12 @@ export default {
                 },
                 responsive: true,
             },
+            opened: false,
         }
     },
     mounted() {
-        if (this.control_device.watering_entry_id !=0 ) {
-            axios
-            .get(`/control_device/${this.control_device.id}/watering_entry/${this.control_device.watering_entry_id}/sensor_device/${this.sensor_device_id}/sensor_readings`)
-            .then(
-                function (response) {
-                    this.$store.commit('state_data', {state_data: {sensor_readings_data: response.data.sensor_readings_data}});
-                    this.updateChart();
-                }.bind(this)
-            )
-            .catch((err) => console.log(err));
+        if (this.control_device.watering_entry_id == this.watering_entry_id ) {
+            this.openChart();
         }
         Echo.channel('control_device.'+this.control_device.id+'.sensor_reading')
             // .here(user => {
@@ -55,7 +61,8 @@ export default {
             //     this.users = this.users.filter(u => u.id != user.id);
             // })
             .listen('SensorReadingAdded',(event) => {
-                this.$store.commit('state_data', {state_data: {sensor_readings_data: event.sensor_readings_data}});
+                this.sensor_readings_data = event.sensor_readings_data;
+                // this.$store.commit('state_data', {state_data: {sensor_readings_data: event.sensor_readings_data}});
                 this.updateChart();
             })
             // .listenForWhisper('typing', user => {
@@ -70,12 +77,29 @@ export default {
         this
     },
     methods: {
+        openChart() {
+            if (this.opened) {
+                this.opened = false;
+                return;
+            }
+            this.opened = true;
+            axios
+            .get(`/control_device/${this.control_device.id}/watering_entry/${this.watering_entry_id}/sensor_device/${this.sensor_device_id}/sensor_readings`)
+            .then(
+                function (response) {
+                    this.sensor_readings_data = response.data.sensor_readings_data;
+                    // this.$store.commit('state_data', {state_data: {sensor_readings_data: response.data.sensor_readings_data}});
+                    this.updateChart();
+                }.bind(this)
+            )
+            .catch((err) => console.log(err));
+        },
         updateChart() {
             this.line_chart_data = {
 				pressure_data: {
-	                labels: JSON.parse(JSON.stringify(this.state_data.sensor_readings_data.labels)),
+	                labels: JSON.parse(JSON.stringify(this.sensor_readings_data.labels)),
 	                datasets: [{
-	                    data: JSON.parse(JSON.stringify(this.state_data.sensor_readings_data.sensor_readings)),
+	                    data: JSON.parse(JSON.stringify(this.sensor_readings_data.sensor_readings)),
 	                    label: "Pressure Reading (Bar)",
 	                    borderColor: "#3e95cd",
 	                    fill: false,
