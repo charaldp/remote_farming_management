@@ -6,6 +6,7 @@ use App\Events\ControlDeviceSwitchedIsOnStatus;
 use App\Models\ControlDevice;
 use App\Models\WateringEntry;
 use Illuminate\Http\Request;
+use Illuminate\Support\Facades\Auth;
 
 class ControlDeviceController extends Controller
 {
@@ -26,6 +27,9 @@ class ControlDeviceController extends Controller
     }
 
     public function edit(ControlDevice $control_device) {
+        if (Auth::user() == null) {
+            return redirect()->route('login');
+        }
         $watering_entry = $control_device->watering_entries->last();
         unset($control_device->watering_entries);
         if ($watering_entry) {
